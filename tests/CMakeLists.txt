@@ -3,5 +3,5 @@
 
 project(cUtilsTests)
 
-defineTestsFor( cUtils "src" "cUtils" )
+defineTestsFor( cUtils "lib" "cUtils" )
 
