@@ -3,5 +3,5 @@
 
 project(CUtils)
 
-defineLibrary(cUtils "src" "" "src")
+defineLibrary(cUtils "lib" "" "lib")
 set_target_properties(cUtils PROPERTIES LINKER_LANGUAGE CXX)

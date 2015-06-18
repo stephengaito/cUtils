@@ -17,5 +17,5 @@ setupStandardTargets()
 configureDoxygen()
 transformDoxygen()
 
-add_subdirectory(src EXCLUDE_FROM_ALL)
+add_subdirectory(lib EXCLUDE_FROM_ALL)
 add_subdirectory(tests EXCLUDE_FROM_ALL)
