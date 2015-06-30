@@ -19,7 +19,8 @@ go_bandit([](){
   printf(  "IndexedBlockAllocator = %zu bytes (%zu bits)\n", sizeof(IndexedBlockAllocator), sizeof(IndexedBlockAllocator)*8);
   printf(  "----------------------------------\n");
 
-  /// \brief We test the correctness of the C-based BlockAllocator structure.
+  /// \brief We test the correctness of the C-based
+  /// IndexedBlockAllocator structure.
   ///
   describe("IndexedBlockAllocator", [](){
 
