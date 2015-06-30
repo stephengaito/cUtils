@@ -1,7 +1,7 @@
 #ifndef BIT_SET_H
 #define BIT_SET_H
 
-#include <cUtils/blockAllocator.h>
+#include <cUtils/assertions.h>
 
 // Determine the architecture (64bit vs 32bit) to determine a number of
 // constants
@@ -13,7 +13,7 @@
 #define BIT_SET_SHIFT     6
 #define BIT_SET_MASK      0x3F
 #else
-#define BIT_SET_UNIT      uint32_t
+#define BIT_SET_UINT      uint32_t
 #define BIT_SET_UINT_MAX  UINT32_MAX
 #define BIT_SET_SHIFT     5
 #define BIT_SET_MASK      0x1F
