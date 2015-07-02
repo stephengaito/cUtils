@@ -70,7 +70,7 @@ class BitSet {
       addSegmentBetween(prevPrevSeg, prevSeg, curSeg);
       ASSERT(curSeg);
       size_t itemNum = bitOffset - curSeg->offset;
-      ASSERT(curSeg->numItems < itemNum);
+      ASSERT(itemNum < curSeg->numItems);
       curSeg->bits[itemNum] |= bitMask;
     }
 
