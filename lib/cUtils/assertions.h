@@ -28,16 +28,18 @@
 // WE want the full debug/development assertion system
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef BANDIT_ASSERTION_EXCEPTION_H
-#include <cassert>
-#include <functional>
-#include <iostream>
-#include <list>
-#include <deque>
-#include <stdexcept>
-#include "bandit/assertion_exception.h"
-#endif
+//#ifndef BANDIT_ASSERTION_EXCEPTION_H
+//#include <cassert>
+//#include <functional>
+//#include <iostream>
+//#include <list>
+//#include <deque>
+//#include <stdexcept>
+//#include "bandit/assertion_exception.h"
+//#endif
 
+#include <string>
+#include <string.h>
 #include <execinfo.h>
 #include <errno.h>
 #include <cxxabi.h>
@@ -59,21 +61,27 @@
 /// file MUST be installed in either the system or local include
 /// directories. A copy of this file can be [download
 /// here](https://github.com/joakimkarlsson/bandit)
-struct AssertionFailure : bandit::detail::assertion_exception {
+struct AssertionFailure {
 
   /// \brief Construct a new instance of AssertionFailure.
-  AssertionFailure(const std::string& message) :
-    bandit::detail::assertion_exception(message) {};
+  AssertionFailure(const char *aMessage) {
+    message    = aMessage;
+    fileName   = NULL;
+    lineNumber = 0;
+  };
 
   /// \brief Construct a new instance of AssertionFailure which
   /// explicitly contains file name and line number information.
   ///
   /// This can be used together with Bandit tests outside of the
   /// Assertion framework.
-  AssertionFailure(const std::string& message,
-                   const std::string& filename,
-                   const unsigned int linenumber) :
-    bandit::detail::assertion_exception(message, filename, linenumber) {};
+  AssertionFailure(const char   *aMessage,
+                   const char   *aFileName,
+                   const size_t  aLineNumber) {
+    message    = aMessage;
+    fileName   = aFileName;
+    lineNumber = aLineNumber;
+  };
 
   /// \brief Add the recent function call information from the call
   /// stack and then rethrow the exception.
@@ -81,25 +89,25 @@ struct AssertionFailure : bandit::detail::assertion_exception {
   /// This method is typically, automatically, called by the ASSERT
   /// and/or ASSERT_MESSAGE macros.
   static void addStackTrace(const AssertionFailure& af,
-                            const std::string& filename,
-                            const unsigned int linenumber) {
+                            const char   *aFileName,
+                            const size_t  aLineNumber) {
     // now add the filename and line numbers provided....
     // and add recent call stack information...
-    std::string message(af.what());
+    std::string messageBuf(af.message);
     void *stackReturnAddressList[MAX_FRAMES+1];
     size_t numFrames = backtrace(stackReturnAddressList, MAX_FRAMES);
     if (1 < numFrames) {
-      message += "\nRecent call stack:";
+      messageBuf += "\nRecent call stack:";
       if (4 < numFrames) numFrames = 4;
       char **stackFrameSymbols =
         backtrace_symbols(stackReturnAddressList, numFrames);
       for (size_t i = 1; i < numFrames; i++) {
-        message += "\n  ";
+        messageBuf += "\n  ";
         char *callName   = NULL;
-        char *callOffset = NULL;
+        /*char *callOffset = NULL;*/
         for ( char *p = stackFrameSymbols[i]; *p; p++) {
           if (*p == '(') callName = ++p;
-          if (*p == '+') { *p = 0; callOffset = ++p; }
+          if (*p == '+') { *p = 0; /*callOffset = ++p;*/ }
           if (*p == ')') *p = 0;
         }
         size_t functionNameBufferSize = 1024;
@@ -110,12 +118,15 @@ struct AssertionFailure : bandit::detail::assertion_exception {
                               &functionNameBufferSize, &status);
         char *functionName = callName;
         if (status == 0) functionName = functionNameResult;
-        message += functionName;
+        messageBuf += functionName;
       }
     }
-    throw bandit::detail::assertion_exception(message, filename, linenumber);
+    throw AssertionFailure(strdup(messageBuf.c_str()), aFileName, aLineNumber);
   }
 
+  const char *message;
+  const char *fileName;
+  size_t     lineNumber;
 };
 
 #define ASSERT(condition)						 \

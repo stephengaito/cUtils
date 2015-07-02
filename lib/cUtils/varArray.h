@@ -44,6 +44,7 @@ class VarArray {
       itemArray = NULL;
       numItems  = 0;
       arraySize = 0;
+      ASSERT(invariant());
     }
 
     /// \brief Return the current number of items in the array.

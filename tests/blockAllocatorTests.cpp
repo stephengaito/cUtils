@@ -1,9 +1,8 @@
-#include <bandit/bandit.h>
-using namespace bandit;
-
 #include <string.h>
 #include <stdio.h>
 #include <exception>
+
+#include <cUtils/specs/specs.h>
 
 #ifndef protected
 #define protected public
@@ -12,94 +11,98 @@ using namespace bandit;
 #include <stdio.h>
 #include <cUtils/blockAllocator.h>
 
-go_bandit([](){
+#define deleteTest(variableName)
 
-  printf("\n----------------------------------\n");
-  printf(  "blockAllocator\n");
-  printf(  "BlockAllocator = %zu bytes (%zu bits)\n", sizeof(BlockAllocator), sizeof(BlockAllocator)*8);
-  printf(  "----------------------------------\n");
+#define OFFdeleteTest(variableName)        {		\
+  delete variableName;                                  \
+  char *someMemory = (char*)calloc(100, sizeof(char));  \
+  shouldNotBeEqual(someMemory, NULL);			\
+  free(someMemory);                                     \
+}
 
-  /// \brief We test the correctness of the C-based BlockAllocator structure.
-  ///
-  describe("BlockAllocator", [](){
+/// \brief We test the correctness of the C-based BlockAllocator structure.
+///
+describe(BlockAllocator) {
 
-    it("CreateBlockAllocator should create a working block allocator", [&](){
-      BlockAllocator *blockAllocator = new BlockAllocator(10);
-      AssertThat(blockAllocator, Is().Not().EqualTo((void*)0));
-      AssertThat(blockAllocator->blockSize, Is().EqualTo(10));
-//      for (size_t i = 0; i < blockAllocator->numBlocks; i++) {
-//        AssertThat(blockAllocator->blocks[i], Is().EqualTo((void*)0));
-//      }
-      delete blockAllocator;
-    });
+  specSize(BlockAllocator);
 
-    it("AddNewBlock should add a new block", [&](){
-      char* prevPtrs[25];
-      BlockAllocator *blockAllocator = new BlockAllocator(10);
-      for (size_t j = 0; j < 25; j++) {
-        blockAllocator->addNewBlock();
-        prevPtrs[j] = blockAllocator->curAllocationByte;
-        AssertThat(blockAllocator->blocks.getNumItems(), Is().EqualTo(j+1));
-        for (size_t i = 0; i <= j; i++) {
-         AssertThat(blockAllocator->blocks.getItem(i, NULL), Is().Not().EqualTo((void*)0));
-         AssertThat(blockAllocator->blocks.getItem(i, NULL), Is().EqualTo(prevPtrs[i]));
-        }
+  it("CreateBlockAllocator should create a working block allocator") {
+    BlockAllocator *blockAllocator = new BlockAllocator(10);
+    shouldNotBeEqual(blockAllocator, NULL);
+    shouldBeEqual(blockAllocator->blockSize, 10);
+//    for (size_t i = 0; i < blockAllocator->numBlocks; i++) {
+//      shouldBeEqual(blockAllocator->blocks[i], NULL);
+//    }
+    deleteTest(blockAllocator);
+  } endIt();
+
+  it("AddNewBlock should add a new block") {
+    char* prevPtrs[25];
+    BlockAllocator *blockAllocator = new BlockAllocator(10);
+    for (size_t j = 0; j < 25; j++) {
+      blockAllocator->addNewBlock();
+      prevPtrs[j] = blockAllocator->curAllocationByte;
+      shouldBeEqual(blockAllocator->blocks.getNumItems(), j+1);
+      for (size_t i = 0; i <= j; i++) {
+       shouldNotBeEqual(blockAllocator->blocks.getItem(i, NULL), NULL);
+       shouldBeEqual(blockAllocator->blocks.getItem(i, NULL), prevPtrs[i]);
       }
-      delete blockAllocator;
-    });
+    }
+    deleteTest(blockAllocator);
+  } endIt();
 
-    it("ClearBlocks and AddNewBlock should work together", [&](){
-      char* prevPtrs[25];
-      BlockAllocator *blockAllocator = new BlockAllocator(10);
-      //
-      // allocate lots of blocks
-      //
-      for (size_t j = 0; j < 25; j++) {
-        blockAllocator->addNewBlock();
-        prevPtrs[j] = blockAllocator->curAllocationByte;
-        AssertThat(blockAllocator->blocks.getNumItems(), Is().EqualTo(j+1));
-        for (size_t i = 0; i <= j; i++) {
-         AssertThat(blockAllocator->blocks.getItem(i, NULL), Is().Not().EqualTo((void*)0));
-         AssertThat(blockAllocator->blocks.getItem(i, NULL), Is().EqualTo(prevPtrs[i]));
-        }
+  it("ClearBlocks and AddNewBlock should work together") {
+    char* prevPtrs[25];
+    BlockAllocator *blockAllocator = new BlockAllocator(10);
+    //
+    // allocate lots of blocks
+    //
+    for (size_t j = 0; j < 25; j++) {
+      blockAllocator->addNewBlock();
+      prevPtrs[j] = blockAllocator->curAllocationByte;
+      shouldBeEqual(blockAllocator->blocks.getNumItems(), j+1);
+      for (size_t i = 0; i <= j; i++) {
+       shouldNotBeEqual(blockAllocator->blocks.getItem(i, NULL), NULL);
+       shouldBeEqual(blockAllocator->blocks.getItem(i, NULL), prevPtrs[i]);
       }
-      //
-      // clear them all
-      //
-      blockAllocator->clearBlocks();
-      //
-      // now allocate some more
-      //
-      for (size_t j = 0; j < 25; j++) {
-        blockAllocator->addNewBlock();
-        prevPtrs[j] = blockAllocator->curAllocationByte;
-        AssertThat(blockAllocator->blocks.getNumItems(), Is().EqualTo(j+1));
-        for (size_t i = 0; i <= j; i++) {
-         AssertThat(blockAllocator->blocks.getItem(i, NULL), Is().Not().EqualTo((void*)0));
-         AssertThat(blockAllocator->blocks.getItem(i, NULL), Is().EqualTo(prevPtrs[i]));
-        }
+    }
+    //
+    // clear them all
+    //
+    blockAllocator->clearBlocks();
+    //
+    // now allocate some more
+    //
+    for (size_t j = 0; j < 25; j++) {
+      blockAllocator->addNewBlock();
+      prevPtrs[j] = blockAllocator->curAllocationByte;
+      shouldBeEqual(blockAllocator->blocks.getNumItems(), j+1);
+      for (size_t i = 0; i <= j; i++) {
+       shouldNotBeEqual(blockAllocator->blocks.getItem(i, NULL), NULL);
+       shouldBeEqual(blockAllocator->blocks.getItem(i, NULL), prevPtrs[i]);
       }
-      delete blockAllocator;
-    });
+    }
+    deleteTest(blockAllocator);
+  } endIt();
 
-    it("AllocateNewStructure should allocate some new structures", [&](){
-      BlockAllocator *blockAllocator = new BlockAllocator(10);
-      for (size_t j = 0; j < 25; j++) {
-        char *aStructure = blockAllocator->allocateNewStructure(2);
-        AssertThat(aStructure, Is().Not().EqualTo((char*)0));
-      }
-      AssertThat(blockAllocator->blocks.getNumItems(), Is().EqualTo(5));
-      size_t i = 0;
-      for ( ; i < 5; i++) {
-        AssertThat(blockAllocator->blocks.getItem(i, NULL), Is().Not().EqualTo((char*)0));
-      }
-      for ( ; i < blockAllocator->blocks.getNumItems(); i++) {
-        AssertThat(blockAllocator->blocks.getItem(i, NULL), Is().EqualTo((char*)0));
-      }
-      delete blockAllocator;
-    });
+  it("AllocateNewStructure should allocate some new structures") {
+    BlockAllocator *blockAllocator = new BlockAllocator(10);
+    for (size_t j = 0; j < 25; j++) {
+      char *aStructure = blockAllocator->allocateNewStructure(2);
+      shouldNotBeEqual(aStructure, NULL);
+    }
+    shouldBeEqual(blockAllocator->blocks.getNumItems(), 5);
+    size_t i = 0;
+    for ( ; i < 5; i++) {
+      shouldNotBeEqual(blockAllocator->blocks.getItem(i, NULL), NULL);
+    }
+    for ( ; i < blockAllocator->blocks.getNumItems(); i++) {
+      shouldBeEqual(blockAllocator->blocks.getItem(i, NULL), NULL);
+    }
+    deleteTest(blockAllocator);
+  } endIt();
 
-  }); // describe BlockAllocator
+} endDescribe(BlockAllocator);
 
-});
+//static int somethingSilly = SpecRunner::registerRunner(runBlockAllocator);
 
