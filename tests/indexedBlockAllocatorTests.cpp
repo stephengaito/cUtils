@@ -108,6 +108,7 @@ describe(IndexedBlockAllocator) {
       size_t ibaItem0 = iba->allocateNewStructure(5);
       shouldBeEqual(ibaItem0, 0);
     }
+    deleteTest(iba);
   } endIt();
 
 } endDescribe(IndexedBlockAllocator);
