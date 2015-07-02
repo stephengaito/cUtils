@@ -40,6 +40,7 @@
 
 #include <string>
 #include <string.h>
+#include <stdlib.h>
 #include <execinfo.h>
 #include <errno.h>
 #include <cxxabi.h>
@@ -64,10 +65,11 @@
 struct AssertionFailure {
 
   /// \brief Construct a new instance of AssertionFailure.
-  AssertionFailure(const char *aMessage) {
-    message    = aMessage;
-    fileName   = NULL;
-    lineNumber = 0;
+  AssertionFailure(const char *aMessage, bool shouldFreeMessage = false) {
+    message     = aMessage;
+    fileName    = NULL;
+    lineNumber  = 0;
+    freeMessage = shouldFreeMessage;
   };
 
   /// \brief Construct a new instance of AssertionFailure which
@@ -77,10 +79,12 @@ struct AssertionFailure {
   /// Assertion framework.
   AssertionFailure(const char   *aMessage,
                    const char   *aFileName,
-                   const size_t  aLineNumber) {
-    message    = aMessage;
-    fileName   = aFileName;
-    lineNumber = aLineNumber;
+                   const size_t  aLineNumber,
+                   bool shouldFreeMessage = false) {
+    message     = aMessage;
+    fileName    = aFileName;
+    lineNumber  = aLineNumber;
+    freeMessage = shouldFreeMessage;
   };
 
   /// \brief Add the recent function call information from the call
@@ -105,7 +109,8 @@ struct AssertionFailure {
         messageBuf += "\n  ";
         char *callName   = NULL;
         /*char *callOffset = NULL;*/
-        for ( char *p = stackFrameSymbols[i]; *p; p++) {
+        char *localSymbols = strdup(stackFrameSymbols[i]);
+        for ( char *p = localSymbols; *p; p++) {
           if (*p == '(') callName = ++p;
           if (*p == '+') { *p = 0; /*callOffset = ++p;*/ }
           if (*p == ')') *p = 0;
@@ -119,14 +124,18 @@ struct AssertionFailure {
         char *functionName = callName;
         if (status == 0) functionName = functionNameResult;
         messageBuf += functionName;
+        if (localSymbols) free(localSymbols);
       }
+      if (stackFrameSymbols) free(stackFrameSymbols);
     }
-    throw AssertionFailure(strdup(messageBuf.c_str()), aFileName, aLineNumber);
+    throw AssertionFailure(strdup(messageBuf.c_str()),
+                           aFileName, aLineNumber, true);
   }
 
   const char *message;
   const char *fileName;
   size_t     lineNumber;
+  bool       freeMessage;
 };
 
 #define ASSERT(condition)						 \

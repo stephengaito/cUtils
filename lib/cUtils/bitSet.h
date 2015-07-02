@@ -111,9 +111,6 @@ class BitSet {
       if (((size_t)BIT_SET_UINT_MAX) <= offset + numItems) {
         return NULL;
       }
-      size_t numMembers = numItems + sizeof(BitSetSegment)/BIT_SET_ITEM_SIZE;
-      fprintf(stdout, " %zu %zu\n", numMembers, sizeof(size_t));
-      fflush(stdout);
       BitSetSegment *segment =
         (BitSetSegment*)calloc(1, 5*sizeof(size_t));
 //        (BitSetSegment*)calloc(numMembers, sizeof(size_t));

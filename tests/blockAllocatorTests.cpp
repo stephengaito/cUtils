@@ -11,15 +11,6 @@
 #include <stdio.h>
 #include <cUtils/blockAllocator.h>
 
-#define deleteTest(variableName)
-
-#define OFFdeleteTest(variableName)        {		\
-  delete variableName;                                  \
-  char *someMemory = (char*)calloc(100, sizeof(char));  \
-  shouldNotBeEqual(someMemory, NULL);			\
-  free(someMemory);                                     \
-}
-
 /// \brief We test the correctness of the C-based BlockAllocator structure.
 ///
 describe(BlockAllocator) {
@@ -33,7 +24,7 @@ describe(BlockAllocator) {
 //    for (size_t i = 0; i < blockAllocator->numBlocks; i++) {
 //      shouldBeEqual(blockAllocator->blocks[i], NULL);
 //    }
-    deleteTest(blockAllocator);
+    delete blockAllocator;
   } endIt();
 
   it("AddNewBlock should add a new block") {
@@ -48,7 +39,7 @@ describe(BlockAllocator) {
        shouldBeEqual(blockAllocator->blocks.getItem(i, NULL), prevPtrs[i]);
       }
     }
-    deleteTest(blockAllocator);
+    delete blockAllocator;
   } endIt();
 
   it("ClearBlocks and AddNewBlock should work together") {
@@ -82,7 +73,7 @@ describe(BlockAllocator) {
        shouldBeEqual(blockAllocator->blocks.getItem(i, NULL), prevPtrs[i]);
       }
     }
-    deleteTest(blockAllocator);
+    delete blockAllocator;
   } endIt();
 
   it("AllocateNewStructure should allocate some new structures") {
@@ -99,7 +90,7 @@ describe(BlockAllocator) {
     for ( ; i < blockAllocator->blocks.getNumItems(); i++) {
       shouldBeEqual(blockAllocator->blocks.getItem(i, NULL), NULL);
     }
-    deleteTest(blockAllocator);
+    delete blockAllocator;
   } endIt();
 
 } endDescribe(BlockAllocator);

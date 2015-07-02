@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <stdio.h>
 
 #include "cUtils/specs/verboseRunner.h"
@@ -29,6 +30,7 @@ void VerboseRunner::assertionFailure(AssertionFailure af) {
   fprintf(logFile, "  --> assertion failure\n");
   fprintf(logFile, "  --> %s(%zu)\n", af.fileName, af.lineNumber);
   fprintf(logFile, "  --> %s\n", af.message);
+  if (af.freeMessage && af.message) free((void*)af.message);
 };
 
 void VerboseRunner::assertShouldEqual(bool condition, bool sense,
