@@ -57,8 +57,19 @@ void SpecRunner::endItSpec(void) { };
 
 void SpecRunner::assertionFailure(AssertionFailure af) {  };
 
-void SpecRunner::assertShouldEqual(bool condition, bool sense,
-         const char* actualStr, const char* expectedStr,
+void SpecRunner::assertShouldEqual(bool sense,
+         const char* actualStr,   int64_t actualValue,
+         const char* expectedStr, int64_t expectedValue,
+         const char* fileName, size_t lineNum) { };
+
+void SpecRunner::assertShouldEqual(bool sense,
+         const char* actualStr,   void *actualValue,
+         const char* expectedStr, void *expectedValue,
+         const char* fileName, size_t lineNum) { };
+
+void SpecRunner::assertShouldEqual(bool sense,
+         const char* actualStr,   const char *actualValue,
+         const char* expectedStr, const char *expectedValue,
          const char* fileName, size_t lineNum) { };
 
 void SpecRunner::logSize(const char* objTypeName, size_t objTypeSize) { };

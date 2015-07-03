@@ -52,26 +52,26 @@ static int localRunner =				\
 /// \def shouldBeTrue(actual)
 /// \brief Asserts that the actual value should be true.
 #define shouldBeTrue(actual)				\
-  SpecRunner::get()->assertShouldEqual( (actual),	\
-    true, #actual, "true", __FILE__, __LINE__)
+  SpecRunner::get()->assertShouldEqual(			\
+    true, #actual, (actual), "true", true, __FILE__, __LINE__)
 
 /// \def shouldBeFalse(actual)
 /// \brief Asserts that the actual value should be false.
 #define shouldBeFalse(actual)				\
-  SpecRunner::get()->assertShouldEqual( (actual),	\
-    false, #actual, "false", __FILE__, __LINE__)
+  SpecRunner::get()->assertShouldEqual(			\
+    false, #actual, (actual), "false", false, __FILE__, __LINE__)
 
 /// \def shouldBeEqual(actual, expected)
 /// \brief Asserts that actual and expected should be equal.
 #define shouldBeEqual(actual, expected)				\
-  SpecRunner::get()->assertShouldEqual( ((actual)==(expected)),	\
-    true, #actual, #expected, __FILE__, __LINE__)
+  SpecRunner::get()->assertShouldEqual(				\
+    true, #actual, (actual), #expected, (expected), __FILE__, __LINE__)
 
 /// \def shouldNotBeEqual(actual, expected)
 /// \brief Asserts that actual and expected should NOT be equal.
 #define shouldNotBeEqual(actual, expected)			\
-  SpecRunner::get()->assertShouldEqual( ((actual)==(expected)),	\
-    false, #actual, #expected, __FILE__, __LINE__)
+  SpecRunner::get()->assertShouldEqual(				\
+    false, #actual, (actual), #expected, (expected), __FILE__, __LINE__)
 
 /// \def specSize(objectType)
 /// \brief Reports the size in bytes and bits of a given object type.
@@ -139,8 +139,21 @@ public:
   virtual void assertionFailure(AssertionFailure af);
 
   /// \brief Report the failure of an equal/not-equal condition.
-  virtual void assertShouldEqual(bool condition, bool sense,
-                 const char* actualStr, const char* expectedStr,
+  virtual void assertShouldEqual(bool sense,
+                 const char* actualStr,   int64_t actualValue,
+                 const char* expectedStr, int64_t expectedValue,
+                 const char* fileName, size_t lineNum);
+
+  /// \brief Report the failure of an equal/not-equal condition.
+  virtual void assertShouldEqual(bool sense,
+                 const char* actualStr,   void *actualValue,
+                 const char* expectedStr, void *expectedValue,
+                 const char* fileName, size_t lineNum);
+
+  /// \brief Report the failure of an equal/not-equal condition.
+  virtual void assertShouldEqual(bool sense,
+                 const char* actualStr,   const char *actualValue,
+                 const char* expectedStr, const char *expectedValue,
                  const char* fileName, size_t lineNum);
 
   /// \brief Report the size of a given object type.

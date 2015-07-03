@@ -41,14 +41,41 @@ void VerboseRunner::assertionFailure(AssertionFailure af) {
   if (af.messages) delete af.messages;
 };
 
-void VerboseRunner::assertShouldEqual(bool condition, bool sense,
-         const char* actualStr, const char* expectedStr,
+void VerboseRunner::assertShouldEqual(bool sense,
+         const char* actualStr,   int64_t actualValue,
+         const char* expectedStr, int64_t expectedValue,
          const char* fileName, size_t lineNum) {
   clearInSideSizeValues();
-  if (condition != sense) {
+  if ((actualValue == expectedValue) != sense) {
     fprintf(logFile, "  --> should %s be equal\n", (sense ? "" : "not"));
-    fprintf(logFile, "  -->   actual: [%s]\n", actualStr);
-    fprintf(logFile, "  --> expected: [%s]\n", expectedStr);
+    fprintf(logFile, "  -->   actual: [%s] = %ld\n", actualStr, actualValue);
+    fprintf(logFile, "  --> expected: [%s] = %ld\n", expectedStr, expectedValue);
+    fprintf(logFile, "  --> file: %s(%zu)\n", fileName, lineNum);
+  }
+};
+
+void VerboseRunner::assertShouldEqual(bool sense,
+         const char* actualStr,   void *actualValue,
+         const char* expectedStr, void *expectedValue,
+         const char* fileName, size_t lineNum) {
+  clearInSideSizeValues();
+  if ((actualValue == expectedValue) != sense) {
+    fprintf(logFile, "  --> should %s be equal\n", (sense ? "" : "not"));
+    fprintf(logFile, "  -->   actual: [%s] = %p\n", actualStr, actualValue);
+    fprintf(logFile, "  --> expected: [%s] = %p\n", expectedStr, expectedValue);
+    fprintf(logFile, "  --> file: %s(%zu)\n", fileName, lineNum);
+  }
+};
+
+void VerboseRunner::assertShouldEqual(bool sense,
+         const char* actualStr,   const char *actualValue,
+         const char* expectedStr, const char *expectedValue,
+         const char* fileName, size_t lineNum) {
+  clearInSideSizeValues();
+  if ((actualValue == expectedValue) != sense) {
+    fprintf(logFile, "  --> should %s be equal\n", (sense ? "" : "not"));
+    fprintf(logFile, "  -->   actual: [%s] = [%s](%p)\n", actualStr, actualValue, actualValue);
+    fprintf(logFile, "  --> expected: [%s] = [%s}(%p)\n", expectedStr, expectedValue, expectedValue);
     fprintf(logFile, "  --> file: %s(%zu)\n", fileName, lineNum);
   }
 };

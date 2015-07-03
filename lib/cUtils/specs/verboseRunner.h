@@ -57,8 +57,21 @@ public:
   void assertionFailure(AssertionFailure af);
 
   /// \brief Report the failure of an equal/not-equal condition.
-  void assertShouldEqual(bool condition, bool sense,
-         const char* actualStr, const char* expectedStr,
+  void assertShouldEqual(bool sense,
+         const char* actualStr,   int64_t actualValue,
+         const char* expectedStr, int64_t expectedValue,
+         const char* fileName, size_t lineNum);
+
+  /// \brief Report the failure of an equal/not-equal condition.
+  void assertShouldEqual(bool sense,
+         const char* actualStr,   void *actualValue,
+         const char* expectedStr, void *expectedValue,
+         const char* fileName, size_t lineNum);
+
+  /// \brief Report the failure of an equal/not-equal condition.
+  void assertShouldEqual(bool sense,
+         const char* actualStr,   const char *actualValue,
+         const char* expectedStr, const char *expectedValue,
          const char* fileName, size_t lineNum);
 
   /// \brief Report the size of a given object type.
