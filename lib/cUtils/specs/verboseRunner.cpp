@@ -29,8 +29,11 @@ void VerboseRunner::endItSpec(void) {
 void VerboseRunner::assertionFailure(AssertionFailure af) {
   fprintf(logFile, "  --> assertion failure\n");
   fprintf(logFile, "  --> %s(%zu)\n", af.fileName, af.lineNumber);
-  fprintf(logFile, "  --> %s\n", af.message);
-  if (af.freeMessage && af.message) free((void*)af.message);
+  for (AssertionFailure::MessageHolder *curMessage = af.messages ;
+       curMessage ; curMessage = curMessage->next) {
+    fprintf(logFile, "  --> %s\n", curMessage->message);
+  }
+  if (af.messages) delete af.messages;
 };
 
 void VerboseRunner::assertShouldEqual(bool condition, bool sense,

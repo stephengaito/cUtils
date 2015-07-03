@@ -28,16 +28,6 @@
 // WE want the full debug/development assertion system
 //////////////////////////////////////////////////////////////////////////////
 
-//#ifndef BANDIT_ASSERTION_EXCEPTION_H
-//#include <cassert>
-//#include <functional>
-//#include <iostream>
-//#include <list>
-//#include <deque>
-//#include <stdexcept>
-//#include "bandit/assertion_exception.h"
-//#endif
-
 #include <string>
 #include <string.h>
 #include <stdlib.h>
@@ -62,14 +52,52 @@
 /// file MUST be installed in either the system or local include
 /// directories. A copy of this file can be [download
 /// here](https://github.com/joakimkarlsson/bandit)
-struct AssertionFailure {
+class AssertionFailure {
+
+public:
+
+  class MessageHolder {
+  public:
+    MessageHolder(const char *aMessage, bool shouldFreeMessage = false) {
+      next        = NULL;
+      message     = aMessage;
+      freeMessage = shouldFreeMessage;
+    }
+    ~MessageHolder(void) {
+      if (next) delete next;
+      if (freeMessage && message) free((void*)message);
+    }
+    MessageHolder *addMessage(const char *aMessage, bool shouldFreeMessage = false) {
+      MessageHolder *newMessage =
+        new MessageHolder(aMessage, shouldFreeMessage);
+      newMessage->next = next;
+      next = newMessage;
+      return next;
+    }
+    MessageHolder *getLastMessage(void) {
+      MessageHolder *lastMessage = next;
+      if (!lastMessage) return this;
+      for ( ; lastMessage->next ; lastMessage = lastMessage->next);
+      return lastMessage;
+    }
+
+    MessageHolder *next;
+    const char *message;
+    bool       freeMessage;
+  };
 
   /// \brief Construct a new instance of AssertionFailure.
   AssertionFailure(const char *aMessage, bool shouldFreeMessage = false) {
-    message     = aMessage;
+    messages    = new MessageHolder(aMessage, shouldFreeMessage);
     fileName    = NULL;
     lineNumber  = 0;
-    freeMessage = shouldFreeMessage;
+  };
+
+  /// \brief Construct a new instance of AssertionFailure.
+  AssertionFailure(MessageHolder *someMessages) {
+    messages    = someMessages;
+    fileName    = NULL;
+    lineNumber  = 0;
   };
 
   /// \brief Construct a new instance of AssertionFailure which
@@ -80,11 +108,23 @@ struct AssertionFailure {
   AssertionFailure(const char   *aMessage,
                    const char   *aFileName,
                    const size_t  aLineNumber,
-                   bool shouldFreeMessage = false) {
-    message     = aMessage;
+                   bool          shouldFreeMessage = false) {
+    messages    = new MessageHolder(aMessage, shouldFreeMessage);
     fileName    = aFileName;
     lineNumber  = aLineNumber;
-    freeMessage = shouldFreeMessage;
+  };
+
+  /// \brief Construct a new instance of AssertionFailure which
+  /// explicitly contains file name and line number information.
+  ///
+  /// This can be used together with Bandit tests outside of the
+  /// Assertion framework.
+  AssertionFailure(MessageHolder *someMessages,
+                   const char    *aFileName,
+                   const size_t   aLineNumber) {
+    messages    = someMessages;
+    fileName    = aFileName;
+    lineNumber  = aLineNumber;
   };
 
   /// \brief Add the recent function call information from the call
@@ -95,18 +135,17 @@ struct AssertionFailure {
   static void addStackTrace(const AssertionFailure& af,
                             const char   *aFileName,
                             const size_t  aLineNumber) {
+    MessageHolder *messages = af.messages->getLastMessage();
     // now add the filename and line numbers provided....
     // and add recent call stack information...
-    std::string messageBuf(af.message);
     void *stackReturnAddressList[MAX_FRAMES+1];
     size_t numFrames = backtrace(stackReturnAddressList, MAX_FRAMES);
     if (1 < numFrames) {
-      messageBuf += "\nRecent call stack:";
+      messages = messages->addMessage("Recent call stack:");
       if (4 < numFrames) numFrames = 4;
       char **stackFrameSymbols =
         backtrace_symbols(stackReturnAddressList, numFrames);
       for (size_t i = 1; i < numFrames; i++) {
-        messageBuf += "\n  ";
         char *callName   = NULL;
         /*char *callOffset = NULL;*/
         char *localSymbols = strdup(stackFrameSymbols[i]);
@@ -119,23 +158,25 @@ struct AssertionFailure {
         char functionNameBuffer[1024];
         int status = 0;
         char *functionNameResult =
-          abi::__cxa_demangle(callName, functionNameBuffer,
+          abi::__cxa_demangle(callName, functionNameBuffer+2,
                               &functionNameBufferSize, &status);
         char *functionName = callName;
         if (status == 0) functionName = functionNameResult;
-        messageBuf += functionName;
+        char *nextLine = (char*)calloc(strlen(functionName)+10, sizeof(char));
+        nextLine[0] = ' ';
+        nextLine[1] = ' ';
+        strcat(nextLine, functionName);
+        messages = messages->addMessage(nextLine, true);
         if (localSymbols) free(localSymbols);
       }
       if (stackFrameSymbols) free(stackFrameSymbols);
     }
-    throw AssertionFailure(strdup(messageBuf.c_str()),
-                           aFileName, aLineNumber, true);
+    throw AssertionFailure(af.messages, aFileName, aLineNumber);
   }
 
-  const char *message;
+  MessageHolder *messages;
   const char *fileName;
   size_t     lineNumber;
-  bool       freeMessage;
 };
 
 #define ASSERT(condition)						 \
