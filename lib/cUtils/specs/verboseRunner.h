@@ -76,6 +76,9 @@ public:
   /// \brief Report the value of an floating point number.
   void logValueDbl(const char* valueName, double   value);
 
+  void setInSideSizeValues(void);
+  void clearInSideSizeValues(void);
+
 protected:
 
   /// \brief The io FILE pointer for the file/stream on which the
@@ -84,6 +87,7 @@ protected:
   /// By default this is stdout.
   FILE *logFile;
 
+  bool inSideSizeValues;
 };
 
 
