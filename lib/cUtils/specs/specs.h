@@ -59,7 +59,7 @@ static int localRunner =				\
 /// \brief Asserts that the actual value should be false.
 #define shouldBeFalse(actual)				\
   SpecRunner::get()->assertShouldEqual(			\
-    false, #actual, (actual), "false", false, __FILE__, __LINE__)
+    true, #actual, (actual), "false", false, __FILE__, __LINE__)
 
 /// \def shouldBeEqual(actual, expected)
 /// \brief Asserts that actual and expected should be equal.
