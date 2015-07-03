@@ -19,10 +19,10 @@ describe(BlockAllocator) {
 
   it("CreateBlockAllocator should create a working block allocator") {
     BlockAllocator *blockAllocator = new BlockAllocator(10);
-    shouldNotBeEqual(blockAllocator, NULL);
+    shouldNotBeNULL(blockAllocator);
     shouldBeEqual(blockAllocator->blockSize, 10);
 //    for (size_t i = 0; i < blockAllocator->numBlocks; i++) {
-//      shouldBeEqual(blockAllocator->blocks[i], NULL);
+//      shouldBeNULL(blockAllocator->blocks[i]);
 //    }
     delete blockAllocator;
   } endIt();
@@ -35,7 +35,7 @@ describe(BlockAllocator) {
       prevPtrs[j] = blockAllocator->curAllocationByte;
       shouldBeEqual(blockAllocator->blocks.getNumItems(), j+1);
       for (size_t i = 0; i <= j; i++) {
-       shouldNotBeEqual(blockAllocator->blocks.getItem(i, NULL), NULL);
+       shouldNotBeNULL(blockAllocator->blocks.getItem(i, NULL));
        shouldBeEqual(blockAllocator->blocks.getItem(i, NULL), prevPtrs[i]);
       }
     }
@@ -53,7 +53,7 @@ describe(BlockAllocator) {
       prevPtrs[j] = blockAllocator->curAllocationByte;
       shouldBeEqual(blockAllocator->blocks.getNumItems(), j+1);
       for (size_t i = 0; i <= j; i++) {
-       shouldNotBeEqual(blockAllocator->blocks.getItem(i, NULL), NULL);
+       shouldNotBeNULL(blockAllocator->blocks.getItem(i, NULL));
        shouldBeEqual(blockAllocator->blocks.getItem(i, NULL), prevPtrs[i]);
       }
     }
@@ -69,7 +69,7 @@ describe(BlockAllocator) {
       prevPtrs[j] = blockAllocator->curAllocationByte;
       shouldBeEqual(blockAllocator->blocks.getNumItems(), j+1);
       for (size_t i = 0; i <= j; i++) {
-       shouldNotBeEqual(blockAllocator->blocks.getItem(i, NULL), NULL);
+       shouldNotBeNULL(blockAllocator->blocks.getItem(i, NULL));
        shouldBeEqual(blockAllocator->blocks.getItem(i, NULL), prevPtrs[i]);
       }
     }
@@ -80,15 +80,15 @@ describe(BlockAllocator) {
     BlockAllocator *blockAllocator = new BlockAllocator(10);
     for (size_t j = 0; j < 25; j++) {
       char *aStructure = blockAllocator->allocateNewStructure(2);
-      shouldNotBeEqual(aStructure, NULL);
+      shouldNotBeNULL(aStructure);
     }
     shouldBeEqual(blockAllocator->blocks.getNumItems(), 5);
     size_t i = 0;
     for ( ; i < 5; i++) {
-      shouldNotBeEqual(blockAllocator->blocks.getItem(i, NULL), NULL);
+      shouldNotBeNULL(blockAllocator->blocks.getItem(i, NULL));
     }
     for ( ; i < blockAllocator->blocks.getNumItems(); i++) {
-      shouldBeEqual(blockAllocator->blocks.getItem(i, NULL), NULL);
+      shouldBeNULL(blockAllocator->blocks.getItem(i, NULL));
     }
     delete blockAllocator;
   } endIt();

@@ -25,7 +25,7 @@ class BitSet {
 
   public:
     bool invariant(void) const {
-      for (BitSetSegment *next = root; next; next = next->next) {
+      for (Segment *next = root; next; next = next->next) {
         if (((size_t)BIT_SET_UINT_MAX) <= next->offset + next->numItems)
           throw AssertionFailure("BitSet too large");
       }
@@ -37,11 +37,15 @@ class BitSet {
       ASSERT(invariant());
     }
 
+    ~BitSet(void) {
+      BitSet::deleteSegments(root);
+    }
+
     bool getBit(size_t bitNum) const {
       ASSERT(invariant());
       size_t bitOffset = num2offset(bitNum);
       size_t bitMask   = getBitMask(bitNum);
-      for (BitSetSegment *curSeg = root; curSeg; curSeg = curSeg->next) {
+      for (Segment *curSeg = root; curSeg; curSeg = curSeg->next) {
         if (bitOffset < curSeg->offset) return false;
         size_t itemNum = bitOffset - curSeg->offset;
         if (curSeg->numItems < itemNum) continue;
@@ -50,41 +54,35 @@ class BitSet {
       return false;
     }
 
-    void setBit(size_t bitNum) {
+    void manipulateBit(size_t bitNum, bool setBit) {
       ASSERT(invariant());
       size_t bitOffset = num2offset(bitNum);
       size_t bitMask   = getBitMask(bitNum);
-      BitSetSegment *prevPrevSeg = NULL;
-      BitSetSegment *prevSeg     = NULL;
-      BitSetSegment *curSeg      = root;
+      Segment *prevPrevSeg = NULL;
+      Segment *prevSeg     = NULL;
+      Segment *curSeg      = root;
       for ( ; curSeg ;
            prevPrevSeg = prevSeg, prevSeg = curSeg, curSeg = curSeg->next ) {
         if (bitOffset < curSeg->offset) {
-          addSegmentBetween(prevPrevSeg, prevSeg, curSeg);
+          addSegmentBetween(bitNum, prevPrevSeg, prevSeg, curSeg);
         }
         size_t itemNum = bitOffset - curSeg->offset;
         if (curSeg->numItems < itemNum) continue;
-        curSeg->bits[itemNum] |= bitMask;
+        if (setBit) curSeg->bits[itemNum] |= bitMask;
+        else        curSeg->bits[itemNum] &= ~bitMask;
         return;
       }
-      addSegmentBetween(prevPrevSeg, prevSeg, curSeg);
+      addSegmentBetween(bitNum, prevPrevSeg, prevSeg, curSeg);
       ASSERT(curSeg);
       size_t itemNum = bitOffset - curSeg->offset;
       ASSERT(itemNum < curSeg->numItems);
-      curSeg->bits[itemNum] |= bitMask;
+        if (setBit) curSeg->bits[itemNum] |= bitMask;
+        else        curSeg->bits[itemNum] &= ~bitMask;
+      if (!root) root = curSeg;
     }
 
-    void clearBit(size_t bitNum) {
-      ASSERT(invariant());
-      size_t bitOffset = num2offset(bitNum);
-      size_t bitMask   = getBitMask(bitNum);
-      for (BitSetSegment *curSeg = root; curSeg; curSeg = curSeg->next) {
-        if (bitOffset < curSeg->offset) return;
-        size_t itemNum = bitOffset - curSeg->offset;
-        if (curSeg->numItems < itemNum) continue;
-        curSeg->bits[itemNum] &= ~bitMask;
-      }
-    }
+    void setBit(size_t bitNum)   { manipulateBit(bitNum, true);  }
+    void clearBit(size_t bitNum) { manipulateBit(bitNum, false); }
 
   protected:
 
@@ -98,37 +96,51 @@ class BitSet {
       return 1 << ((bitNum & BIT_SET_MASK)-1);
     }
 
-    typedef struct BitSetSegment {
-      BitSetSegment *next;
+    typedef struct Segment {
+      Segment *next;
       BIT_SET_UINT offset;
       BIT_SET_UINT numItems;
       size_t bits[0];
-    } BitSetSegment;
+    } Segment;
 
-    static BitSetSegment *newBitSetSegment(size_t offset, size_t numBits) {
-      offset = num2offset(offset);
-      size_t numItems = num2offset(numBits)+1;
+    static Segment *newSegment(size_t bitNum, size_t numBits) {
+      BIT_SET_UINT offset   = num2offset(bitNum);
+      BIT_SET_UINT numItems = num2offset(numBits)+1;
       if (((size_t)BIT_SET_UINT_MAX) <= offset + numItems) {
         return NULL;
       }
-      BitSetSegment *segment =
-        (BitSetSegment*)calloc(1, 5*sizeof(size_t));
-//        (BitSetSegment*)calloc(numMembers, sizeof(size_t));
+      size_t numMembers = numItems + sizeof(Segment)/BIT_SET_ITEM_SIZE;
+      Segment *segment =
+        (Segment*)calloc(numMembers, sizeof(size_t));
       ASSERT(segment);
-//      segment->next = NULL;
-//      segment->offset = offset;
-//      segment->numItems = numItems;
+      segment->next     = NULL;
+      segment->offset   = offset;
+      segment->numItems = numItems;
       return segment;
     }
 
-    void addSegmentBetween(BitSetSegment *&prevPrevSeg,
-                           BitSetSegment *&prevSeg,
-                           BitSetSegment *&curSeg) {
-      curSeg = newBitSetSegment(10,10);
-      ASSERT(curSeg);
+    static void deleteSegments(Segment *segment) {
+      if (!segment) return;
+      deleteSegments(segment->next);
+      segment->next = NULL;
+      segment->offset = 0;
+      segment->numItems = 0;
+      free(segment);
     }
 
-    BitSetSegment *root;
+    void addSegmentBetween(size_t bitNum,
+                           Segment *&prevPrevSeg,
+                           Segment *&prevSeg,
+                           Segment *&curSeg) {
+      if (!prevPrevSeg && !prevSeg && !curSeg) {
+        // no segment has ever been assigned
+        curSeg = newSegment(bitNum,63);
+        ASSERT(curSeg);
+        return;
+      }
+    }
+
+    Segment *root;
 };
 
 #endif

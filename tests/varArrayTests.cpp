@@ -25,9 +25,9 @@ describe(VarArray) {
     VarArray<int> aVarArray;
     shouldBeEqual(aVarArray.numItems,  0);
     shouldBeEqual(aVarArray.arraySize, 0);
-    shouldBeEqual(aVarArray.itemArray, NULL);
+    shouldBeNULL(aVarArray.itemArray);
     aVarArray.~VarArray<int>();
-    shouldBeEqual(aVarArray.itemArray, NULL);
+    shouldBeNULL(aVarArray.itemArray);
     shouldBeEqual(aVarArray.numItems,  0);
     shouldBeEqual(aVarArray.arraySize, 0);
   } endIt();
@@ -36,7 +36,7 @@ describe(VarArray) {
     VarArray<int> aVarArray;
     shouldBeEqual(aVarArray.numItems,  0);
     shouldBeEqual(aVarArray.arraySize, 0);
-    shouldBeEqual(aVarArray.itemArray, NULL);
+    shouldBeNULL(aVarArray.itemArray);
     for (size_t i = 0; i < 100; i++) {
       aVarArray.pushItem(i);
       shouldBeEqual(aVarArray.getNumItems(), (i+1));
@@ -74,7 +74,7 @@ describe(VarArray) {
     shouldBeEqual(aVarArray.getNumItems(), 0);
     shouldBeEqual(aVarArray.arraySize, (arraySize));
     aVarArray.~VarArray<int>();
-    shouldBeEqual(aVarArray.itemArray, NULL);
+    shouldBeNULL(aVarArray.itemArray);
     shouldBeEqual(aVarArray.numItems,  0);
     shouldBeEqual(aVarArray.arraySize, 0);
   } endIt();
@@ -83,9 +83,9 @@ describe(VarArray) {
     VarArray<const char*> aVarArray;
     shouldBeEqual(aVarArray.numItems,  0);
     shouldBeEqual(aVarArray.arraySize, 0);
-    shouldBeEqual(aVarArray.itemArray, NULL);
+    shouldBeNULL(aVarArray.itemArray);
     aVarArray.~VarArray<const char*>();
-    shouldBeEqual(aVarArray.itemArray, NULL);
+    shouldBeNULL(aVarArray.itemArray);
     shouldBeEqual(aVarArray.numItems,  0);
     shouldBeEqual(aVarArray.arraySize, 0);
   } endIt();
@@ -94,7 +94,7 @@ describe(VarArray) {
     VarArray<int> aVarArray;
     shouldBeEqual(aVarArray.numItems,  0);
     shouldBeEqual(aVarArray.arraySize, 0);
-    shouldBeEqual(aVarArray.itemArray, NULL);
+    shouldBeNULL(aVarArray.itemArray);
     for (size_t i = 0; i < 100; i++) {
       aVarArray.pushItem(i);
       shouldBeEqual(aVarArray.getNumItems(), (i+1));
@@ -111,7 +111,7 @@ describe(VarArray) {
     shouldBeEqual(aVarArray.getNumItems(), 0);
     shouldBeEqual(aVarArray.arraySize, (arraySize));
     aVarArray.~VarArray<int>();
-    shouldBeEqual(aVarArray.itemArray, NULL);
+    shouldBeNULL(aVarArray.itemArray);
     shouldBeEqual(aVarArray.numItems,  0);
     shouldBeEqual(aVarArray.arraySize, 0);
   } endIt();
@@ -120,7 +120,7 @@ describe(VarArray) {
     VarArray<const char*> aVarArray;
     shouldBeEqual(aVarArray.numItems,  0);
     shouldBeEqual(aVarArray.arraySize, 0);
-    shouldBeEqual(aVarArray.itemArray, NULL);
+    shouldBeNULL(aVarArray.itemArray);
     for (size_t i = 0; i < 100; i++) {
       aVarArray.pushItem((char*)i);
       shouldBeEqual(aVarArray.getNumItems(), (i+1));
@@ -137,7 +137,7 @@ describe(VarArray) {
     shouldBeEqual(aVarArray.getNumItems(), 0);
     shouldBeEqual(aVarArray.arraySize, (arraySize));
     aVarArray.~VarArray<const char*>();
-    shouldBeEqual(aVarArray.itemArray, NULL);
+    shouldBeNULL(aVarArray.itemArray);
     shouldBeEqual(aVarArray.numItems,  0);
     shouldBeEqual(aVarArray.arraySize, 0);
   } endIt();

@@ -20,7 +20,7 @@ describe(IndexedBlockAllocator) {
 
   it("should create an IndexedBlockAllocator") {
     IndexedBlockAllocator *iba = new IndexedBlockAllocator(11, 4);
-    shouldNotBeEqual(iba, NULL);
+    shouldNotBeNULL(iba);
     shouldBeEqual(iba->itemSize, 11);
     shouldBeEqual(iba->bitShift, 4);
     delete iba;
@@ -28,7 +28,7 @@ describe(IndexedBlockAllocator) {
 
   it("can allocate a new item") {
     IndexedBlockAllocator *iba = new IndexedBlockAllocator(11, 4);
-    shouldNotBeEqual(iba, NULL);
+    shouldNotBeNULL(iba);
     size_t iba0 = iba->allocateNewStructure();
     size_t iba1 = iba->allocateNewStructure();
     shouldBeEqual(iba0, 0);
@@ -40,7 +40,7 @@ describe(IndexedBlockAllocator) {
 
   it("can allocate lots of new items") {
     IndexedBlockAllocator *iba = new IndexedBlockAllocator(11, 4);
-    shouldNotBeEqual(iba, NULL);
+    shouldNotBeNULL(iba);
     shouldBeEqual(iba->blocks.getNumItems(), 0);
     for (size_t i = 0; i < 1<<5; i++) {
       size_t ibaItem = iba->allocateNewStructure();
@@ -60,7 +60,7 @@ describe(IndexedBlockAllocator) {
 
   it("can allocate lots of new items, clear them and then allocate some more") {
     IndexedBlockAllocator *iba = new IndexedBlockAllocator(11, 4);
-    shouldNotBeEqual(iba, NULL);
+    shouldNotBeNULL(iba);
     shouldBeEqual(iba->blocks.getNumItems(), 0);
     for (size_t i = 0; i < 1<<5; i++) {
       size_t ibaItem = iba->allocateNewStructure();
@@ -95,7 +95,7 @@ describe(IndexedBlockAllocator) {
 
   it("should NOT allow the use of allocateNewStructure(size_t)") {
     IndexedBlockAllocator *iba = new IndexedBlockAllocator(11, 4);
-    shouldNotBeEqual(iba, NULL);
+    shouldNotBeNULL(iba);
     for (size_t i = 0; i < 10; i++) {
       size_t ibaItem0 = iba->allocateNewStructure(5);
       shouldBeEqual(ibaItem0, 0);
