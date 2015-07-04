@@ -26,6 +26,8 @@ static int run ## className(void) {			\
 #define endDescribe(className)				\
   catch (AssertionFailure af) {				\
     SpecRunner::get()->assertionFailure(af);		\
+  } catch (SpecificationFailed sf) {			\
+    /* do nothing */					\
   }							\
   return SpecRunner::get()->endDescription();		\
 }							\
@@ -46,6 +48,8 @@ static int localRunner =				\
 #define endIt()						\
   catch (AssertionFailure af) {				\
     SpecRunner::get()->assertionFailure(af);		\
+  } catch (SpecificationFailed sf) {			\
+    /* do nothing */					\
   }							\
   SpecRunner::get()->endItSpec()
 
@@ -57,9 +61,10 @@ static int localRunner =				\
 
 /// \def shouldNotBeNULL(actual)
 /// \brief Asserts that the actual value should not be NULL.
-#define shouldNotBeNULL(actual)				\
-  SpecRunner::get()->assertShouldEqual(			\
-    false, #actual, (actual), "NULL", NULL, __FILE__, __LINE__)
+#define shouldNotBeNULL(actual)						\
+  if (SpecRunner::get()->assertShouldEqual(				\
+    false, #actual, (actual), "NULL", NULL, __FILE__, __LINE__))	\
+    throw SpecificationFailed();
 
 /// \def shouldBeTrue(actual)
 /// \brief Asserts that the actual value should be true.
@@ -96,6 +101,14 @@ static int localRunner =				\
 /// \def specHValue(integerValue)
 /// \brief Reports the hexadecimal value of a given unsigned integer
 #define specHValue(objValue) SpecRunner::get()->logValueHInt(#objValue, ((size_t)(objValue)));
+
+/// \brief SpecificationFailed is thrown if a specification failed
+/// (such as shouldNotBeNULL) for which it is unlikely the rest of the
+/// specification should continue.
+class SpecificationFailed {
+  // At the moment we only care about the existence of this object
+  // but do not care about any internal details.
+};
 
 /// \brief (Internal) The signature of a describe function to be run by
 /// a SpecRunner.
@@ -151,19 +164,25 @@ public:
   virtual void assertionFailure(AssertionFailure af);
 
   /// \brief Report the failure of an equal/not-equal condition.
-  virtual void assertShouldEqual(bool sense,
+  ///
+  /// Returns the value of the condition.
+  virtual bool assertShouldEqual(bool sense,
                  const char* actualStr,   int64_t actualValue,
                  const char* expectedStr, int64_t expectedValue,
                  const char* fileName, size_t lineNum);
 
   /// \brief Report the failure of an equal/not-equal condition.
-  virtual void assertShouldEqual(bool sense,
+  ///
+  /// Returns the value of the condition.
+  virtual bool assertShouldEqual(bool sense,
                  const char* actualStr,   void *actualValue,
                  const char* expectedStr, void *expectedValue,
                  const char* fileName, size_t lineNum);
 
   /// \brief Report the failure of an equal/not-equal condition.
-  virtual void assertShouldEqual(bool sense,
+  ///
+  /// Returns the value of the condition.
+  virtual bool assertShouldEqual(bool sense,
                  const char* actualStr,   const char *actualValue,
                  const char* expectedStr, const char *expectedValue,
                  const char* fileName, size_t lineNum);
