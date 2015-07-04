@@ -41,7 +41,7 @@ describe(IndexedBlockAllocator) {
   it("can allocate lots of new items") {
     IndexedBlockAllocator *iba = new IndexedBlockAllocator(11, 4);
     shouldNotBeNULL(iba);
-    shouldBeEqual(iba->blocks.getNumItems(), 0);
+    shouldBeZero(iba->blocks.getNumItems());
     for (size_t i = 0; i < 1<<5; i++) {
       size_t ibaItem = iba->allocateNewStructure();
       shouldBeEqual(ibaItem, i);
@@ -61,7 +61,7 @@ describe(IndexedBlockAllocator) {
   it("can allocate lots of new items, clear them and then allocate some more") {
     IndexedBlockAllocator *iba = new IndexedBlockAllocator(11, 4);
     shouldNotBeNULL(iba);
-    shouldBeEqual(iba->blocks.getNumItems(), 0);
+    shouldBeZero(iba->blocks.getNumItems());
     for (size_t i = 0; i < 1<<5; i++) {
       size_t ibaItem = iba->allocateNewStructure();
       shouldBeEqual(ibaItem, i);
@@ -76,7 +76,7 @@ describe(IndexedBlockAllocator) {
     shouldBeEqual(iba->blocks.getNumItems(), 3);
     shouldBeEqual(iba->getItemPtr(ibaItem1), iba->blocks.getTop()+11);
     iba->clearBlocks();
-    shouldBeEqual(iba->blocks.getNumItems(), 0);
+    shouldBeZero(iba->blocks.getNumItems());
     for (size_t i = 0; i < 1<<5; i++) {
       size_t ibaItem = iba->allocateNewStructure();
       shouldBeEqual(ibaItem, i);
@@ -98,7 +98,7 @@ describe(IndexedBlockAllocator) {
     shouldNotBeNULL(iba);
     for (size_t i = 0; i < 10; i++) {
       size_t ibaItem0 = iba->allocateNewStructure(5);
-      shouldBeEqual(ibaItem0, 0);
+      shouldBeZero(ibaItem0);
     }
     delete iba;
   } endIt();

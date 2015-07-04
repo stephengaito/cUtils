@@ -53,6 +53,18 @@ static int localRunner =				\
   }							\
   SpecRunner::get()->endItSpec()
 
+/// \def shouldBeZero(actual)
+/// \brief Asserts that the actual value should be 0.
+#define shouldBeZero(actual)				\
+  SpecRunner::get()->assertShouldEqual(			\
+    true, #actual, (actual), "0", 0, __FILE__, __LINE__)
+
+/// \def shouldNotBeZero(actual)
+/// \brief Asserts that the actual value should not be 0.
+#define shouldNotBeZero(actual)				\
+  SpecRunner::get()->assertShouldEqual(			\
+    false, #actual, (actual), "0", 0, __FILE__, __LINE__)
+
 /// \def shouldBeNULL(actual)
 /// \brief Asserts that the actual value should be NULL.
 #define shouldBeNULL(actual)				\

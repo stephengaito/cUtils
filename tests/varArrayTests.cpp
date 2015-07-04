@@ -23,24 +23,24 @@ describe(VarArray) {
 
   it("should be created with correct values when instantiated with int") {
     VarArray<int> aVarArray;
-    shouldBeEqual(aVarArray.numItems,  0);
-    shouldBeEqual(aVarArray.arraySize, 0);
+    shouldBeZero(aVarArray.numItems);
+    shouldBeZero(aVarArray.arraySize);
     shouldBeNULL(aVarArray.itemArray);
     aVarArray.~VarArray<int>();
     shouldBeNULL(aVarArray.itemArray);
-    shouldBeEqual(aVarArray.numItems,  0);
-    shouldBeEqual(aVarArray.arraySize, 0);
+    shouldBeZero(aVarArray.numItems);
+    shouldBeZero(aVarArray.arraySize);
   } endIt();
 
   it("should be able to push and pop lots of items when instantiated with int") {
     VarArray<int> aVarArray;
-    shouldBeEqual(aVarArray.numItems,  0);
-    shouldBeEqual(aVarArray.arraySize, 0);
+    shouldBeZero(aVarArray.numItems);
+    shouldBeZero(aVarArray.arraySize);
     shouldBeNULL(aVarArray.itemArray);
     for (size_t i = 0; i < 100; i++) {
       aVarArray.pushItem(i);
       shouldBeEqual(aVarArray.getNumItems(), (i+1));
-      shouldNotBeEqual(aVarArray.arraySize, 0);
+      shouldNotBeZero(aVarArray.arraySize);
       shouldBeEqual(aVarArray.itemArray[i], (i));
     }
     //
@@ -53,7 +53,7 @@ describe(VarArray) {
       shouldBeEqual(someInts[i], (i));
     }
     for (size_t i = 100; i < 200; i++) {
-      shouldBeEqual(someInts[i], 0);
+      shouldBeZero(someInts[i]);
     }
     //
     // test copyItems with a small non-multiple sizeof(int) buffer size
@@ -63,7 +63,7 @@ describe(VarArray) {
       shouldBeEqual(someInts[i], (i));
     }
     for (size_t i = 50; i < 200; i++) {
-      shouldBeEqual(someInts[i], 0);
+      shouldBeZero(someInts[i]);
     }
     size_t arraySize = aVarArray.arraySize;
     for(size_t i = 100; 0 < i; i--) {
@@ -71,34 +71,34 @@ describe(VarArray) {
       shouldBeEqual(aVarArray.getNumItems(), (i-1));
       shouldBeEqual(aVarArray.arraySize, (arraySize));
     }
-    shouldBeEqual(aVarArray.getNumItems(), 0);
+    shouldBeZero(aVarArray.getNumItems());
     shouldBeEqual(aVarArray.arraySize, (arraySize));
     aVarArray.~VarArray<int>();
     shouldBeNULL(aVarArray.itemArray);
-    shouldBeEqual(aVarArray.numItems,  0);
-    shouldBeEqual(aVarArray.arraySize, 0);
+    shouldBeZero(aVarArray.numItems);
+    shouldBeZero(aVarArray.arraySize);
   } endIt();
 
   it("should be created with correct values when instantiated with const char*") {
     VarArray<const char*> aVarArray;
-    shouldBeEqual(aVarArray.numItems,  0);
-    shouldBeEqual(aVarArray.arraySize, 0);
+    shouldBeZero(aVarArray.numItems);
+    shouldBeZero(aVarArray.arraySize);
     shouldBeNULL(aVarArray.itemArray);
     aVarArray.~VarArray<const char*>();
     shouldBeNULL(aVarArray.itemArray);
-    shouldBeEqual(aVarArray.numItems,  0);
-    shouldBeEqual(aVarArray.arraySize, 0);
+    shouldBeZero(aVarArray.numItems);
+    shouldBeZero(aVarArray.arraySize);
   } endIt();
 
   it("should be able to push/pop lots of items when instantiated with const char*") {
     VarArray<int> aVarArray;
-    shouldBeEqual(aVarArray.numItems,  0);
-    shouldBeEqual(aVarArray.arraySize, 0);
+    shouldBeZero(aVarArray.numItems);
+    shouldBeZero(aVarArray.arraySize);
     shouldBeNULL(aVarArray.itemArray);
     for (size_t i = 0; i < 100; i++) {
       aVarArray.pushItem(i);
       shouldBeEqual(aVarArray.getNumItems(), (i+1));
-      shouldNotBeEqual(aVarArray.arraySize, 0);
+      shouldNotBeZero(aVarArray.arraySize);
       shouldBeEqual(aVarArray.itemArray[i], (i));
     }
     shouldBeEqual(aVarArray.numItems,      (100));
@@ -108,23 +108,23 @@ describe(VarArray) {
       shouldBeEqual(aVarArray.getNumItems(), (i-1));
       shouldBeEqual(aVarArray.arraySize, (arraySize));
     }
-    shouldBeEqual(aVarArray.getNumItems(), 0);
+    shouldBeZero(aVarArray.getNumItems());
     shouldBeEqual(aVarArray.arraySize, (arraySize));
     aVarArray.~VarArray<int>();
     shouldBeNULL(aVarArray.itemArray);
-    shouldBeEqual(aVarArray.numItems,  0);
-    shouldBeEqual(aVarArray.arraySize, 0);
+    shouldBeZero(aVarArray.numItems);
+    shouldBeZero(aVarArray.arraySize);
   } endIt();
 
   it("should be able to push/pop lots of items when instantiated with const char*") {
     VarArray<const char*> aVarArray;
-    shouldBeEqual(aVarArray.numItems,  0);
-    shouldBeEqual(aVarArray.arraySize, 0);
+    shouldBeZero(aVarArray.numItems);
+    shouldBeZero(aVarArray.arraySize);
     shouldBeNULL(aVarArray.itemArray);
     for (size_t i = 0; i < 100; i++) {
       aVarArray.pushItem((char*)i);
       shouldBeEqual(aVarArray.getNumItems(), (i+1));
-      shouldNotBeEqual(aVarArray.arraySize, 0);
+      shouldNotBeZero(aVarArray.arraySize);
       shouldBeEqual(aVarArray.itemArray[i], ((char*)i));
     }
     shouldBeEqual(aVarArray.numItems,      (100));
@@ -134,12 +134,12 @@ describe(VarArray) {
       shouldBeEqual(aVarArray.getNumItems(), (i-1));
       shouldBeEqual(aVarArray.arraySize, (arraySize));
     }
-    shouldBeEqual(aVarArray.getNumItems(), 0);
+    shouldBeZero(aVarArray.getNumItems());
     shouldBeEqual(aVarArray.arraySize, (arraySize));
     aVarArray.~VarArray<const char*>();
     shouldBeNULL(aVarArray.itemArray);
-    shouldBeEqual(aVarArray.numItems,  0);
-    shouldBeEqual(aVarArray.arraySize, 0);
+    shouldBeZero(aVarArray.numItems);
+    shouldBeZero(aVarArray.arraySize);
   } endIt();
 
 } endDescribe(VarArray);

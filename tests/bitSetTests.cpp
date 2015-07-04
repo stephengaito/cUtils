@@ -39,8 +39,8 @@ describe(BitSet) {
   } endIt();
 
   it("offset2num compose num2offset should be inverse modulo rounding down") {
-    shouldBeEqual(BitSet::offset2num(BitSet::num2offset(12)), 0);
-    shouldBeEqual(BitSet::offset2num(BitSet::num2offset(63)), 0);
+    shouldBeZero(BitSet::offset2num(BitSet::num2offset(12)));
+    shouldBeZero(BitSet::offset2num(BitSet::num2offset(63)));
     shouldBeEqual(BitSet::offset2num(BitSet::num2offset(64)), 64);
     shouldBeEqual(BitSet::offset2num(BitSet::num2offset(65)), 64);
     shouldBeEqual(BitSet::offset2num(BitSet::num2offset(12287)), 12224);
@@ -53,7 +53,7 @@ describe(BitSet) {
     BitSet::Segment *segment = BitSet::newSegment(10, 10);
     shouldNotBeNULL(segment);
     shouldBeNULL(segment->next);
-    shouldBeEqual(segment->offset, 0);
+    shouldBeZero(segment->offset);
     shouldBeEqual(segment->numItems, 1);
     BitSet::deleteSegments(segment);
     segment = BitSet::newSegment(12314, 12314);
