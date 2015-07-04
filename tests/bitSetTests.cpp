@@ -49,7 +49,7 @@ describe(BitSet) {
     shouldBeEqual(BitSet::offset2num(BitSet::num2offset(12316)), 12288);
   } endIt();
 
-  it("newSegment should return a correct bitSegments") {
+  it("newSegment should return a correct bitSegment") {
     BitSet::Segment *segment = BitSet::newSegment(10, 10);
     shouldNotBeNULL(segment);
     shouldBeNULL(segment->next);
@@ -64,7 +64,7 @@ describe(BitSet) {
     BitSet::deleteSegments(segment);
   } endIt();
 
-  it("should be able to set and clear individual bits") {
+  it("should be able to twiddle multiple close bits in an empty bitSet") {
     BitSet *bitSet = new BitSet();
     shouldNotBeNULL(bitSet);
     shouldBeNULL(bitSet->root);
@@ -75,6 +75,58 @@ describe(BitSet) {
     shouldBeFalse(bitSet->getBit(10001));
     bitSet->clearBit(1000);
     shouldBeFalse(bitSet->getBit(1000));
+    bitSet->toggleBit(1000);
+    shouldBeTrue(bitSet->getBit(1000));
+    bitSet->toggleBit(1000);
+    shouldBeFalse(bitSet->getBit(1000));
+    delete bitSet;
+  } endIt();
+
+  it("should be able to twiddle multiple bits larger first") {
+    BitSet *bitSet = new BitSet();
+    shouldNotBeNULL(bitSet);
+    shouldBeNULL(bitSet->root);
+    shouldBeFalse(bitSet->getBit(1000));
+    bitSet->setBit(1000);
+    shouldBeTrue(bitSet->getBit(1000));
+    shouldNotBeNULL(bitSet->root);
+    shouldBeFalse(bitSet->getBit(1));
+    bitSet->setBit(1);
+    shouldBeTrue(bitSet->getBit(1));
+    delete bitSet;
+  } endIt();
+
+  it("should be able to twiddle multiple bits largest last") {
+    BitSet *bitSet = new BitSet();
+    shouldNotBeNULL(bitSet);
+    shouldBeNULL(bitSet->root);
+    shouldBeFalse(bitSet->getBit(1));
+    bitSet->setBit(1);
+    shouldBeTrue(bitSet->getBit(1));
+    shouldNotBeNULL(bitSet->root);
+    shouldBeFalse(bitSet->getBit(1000));
+    bitSet->setBit(1000);
+    shouldBeTrue(bitSet->getBit(1000));
+    delete bitSet;
+  } endIt();
+
+  it("should be able to twiddle multiple bits middle last") {
+    BitSet *bitSet = new BitSet();
+    shouldNotBeNULL(bitSet);
+    shouldBeNULL(bitSet->root);
+    shouldBeFalse(bitSet->getBit(1));
+    bitSet->setBit(1);
+    shouldBeTrue(bitSet->getBit(1));
+    shouldNotBeNULL(bitSet->root);
+
+    shouldBeFalse(bitSet->getBit(1000));
+    bitSet->setBit(1000);
+    shouldBeTrue(bitSet->getBit(1000));
+
+    shouldBeFalse(bitSet->getBit(500));
+    bitSet->setBit(500);
+    shouldBeTrue(bitSet->getBit(500));
+
     delete bitSet;
   } endIt();
 
