@@ -13,7 +13,7 @@
 ///
 /// There MUST be a corresponding endDescribe macro call.
 #define describe(className)				\
-static int run ## className(void) {			\
+int run ## className(void) {			\
   SpecRunner::get()->beginDescription(#className);	\
   try
 

@@ -142,10 +142,10 @@ public:
     size_t numFrames = backtrace(stackReturnAddressList, MAX_FRAMES);
     if (1 < numFrames) {
       messages = messages->addMessage("Recent call stack:");
-      if (4 < numFrames) numFrames = 4;
+      if (6 < numFrames) numFrames = 6;
       char **stackFrameSymbols =
         backtrace_symbols(stackReturnAddressList, numFrames);
-      for (size_t i = 1; i < numFrames; i++) {
+      for (size_t i = 2; i < numFrames; i++) {
         char *callName   = NULL;
         /*char *callOffset = NULL;*/
         char *localSymbols = strdup(stackFrameSymbols[i]);
@@ -162,10 +162,13 @@ public:
                               &functionNameBufferSize, &status);
         char *functionName = callName;
         if (status == 0) functionName = functionNameResult;
+        // the next line string MUST be at least 2 + strlen("static")
+        // longer than strlen(functionName);
         char *nextLine = (char*)calloc(strlen(functionName)+10, sizeof(char));
         nextLine[0] = ' ';
         nextLine[1] = ' ';
-        strcat(nextLine, functionName);
+        if (strlen(functionName)) strcat(nextLine, functionName);
+        else                      strcat(nextLine, "static");
         messages = messages->addMessage(nextLine, true);
         if (localSymbols) free(localSymbols);
       }
