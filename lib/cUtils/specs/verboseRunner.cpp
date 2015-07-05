@@ -98,8 +98,8 @@ bool VerboseRunner::assertShouldEqual(bool sense,
   bool condition = (actualValue == expectedValue);
   if (condition != sense) {
     fprintf(logFile, "-->>> should %s be equal\n", (sense ? "" : "not"));
-    fprintf(logFile, "---->   actual: [%s] = %lld\n", actualStr, actualValue);
-    fprintf(logFile, "----> expected: [%s] = %lld\n", expectedStr, expectedValue);
+    fprintf(logFile, "---->   actual: [%s] = %lld\n", actualStr, (long long int)actualValue);
+    fprintf(logFile, "----> expected: [%s] = %lld\n", expectedStr, (long long int)expectedValue);
     fprintf(logFile, "----> file: %s(%zu)\n", fileName, lineNum);
     SHOULD_FAILED;
   } else numSuccessfulShoulds++;
