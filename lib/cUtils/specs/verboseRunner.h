@@ -95,6 +95,8 @@ public:
   /// \brief Report the value of an floating point number.
   void logValueDbl(const char* valueName, double   value);
 
+  void logReport(void);
+
   void setInSideSizeValues(void);
   void clearInSideSizeValues(void);
 
@@ -107,6 +109,23 @@ protected:
   FILE *logFile;
 
   bool inSideSizeValues;
+
+  bool descriptionFailed;
+  bool descriptionPending;
+  bool specFailed;
+  bool specPending;
+
+  size_t numDescriptions;
+  size_t numSpecs;
+  size_t numShoulds;
+  size_t numFailedDescriptions;
+  size_t numFailedSpecs;
+  size_t numFailedShoulds;
+  size_t numSuccessfulDescriptions;
+  size_t numSuccessfulSpecs;
+  size_t numSuccessfulShoulds;
+  size_t numPendingDescriptions;
+  size_t numPendingSpecs;
 };
 
 

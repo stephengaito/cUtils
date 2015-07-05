@@ -88,13 +88,13 @@ static int localRunner =				\
 /// \brief Asserts that the actual value should be NULL.
 #define shouldBeNULL(actual)				\
   SpecRunner::get()->assertShouldEqual(			\
-    true, #actual, (actual), "NULL", NULL, __FILE__, __LINE__)
+    true, #actual, (actual), "NULL", ((void*)NULL), __FILE__, __LINE__)
 
 /// \def shouldNotBeNULL(actual)
 /// \brief Asserts that the actual value should not be NULL.
 #define shouldNotBeNULL(actual)						\
   if (SpecRunner::get()->assertShouldEqual(				\
-    false, #actual, (actual), "NULL", NULL, __FILE__, __LINE__))	\
+    false, #actual, (actual), "NULL", ((void*)NULL), __FILE__, __LINE__)) \
     throw SpecificationFailed();
 
 /// \def shouldBeTrue(actual)
@@ -232,6 +232,9 @@ public:
 
   /// \brief Report the value of an floating point number.
   virtual void logValueDbl(const char* valueName, double   value);
+
+  /// \brief Report the success/failure of these specs.
+  virtual void logReport(void);
 
   /// \brief Register the SpecRunner (or subclass) which will be used
   /// to manage the specifications.

@@ -35,6 +35,7 @@ int SpecRunner::runAllUsing(SpecRunner *aRunner) {
   for ( ; curRunner ; curRunner = curRunner->next) {
     numFailures += (*(curRunner->func))();
   };
+  aRunner->logReport();
   return numFailures;
 }
 
@@ -83,3 +84,5 @@ void SpecRunner::logValueUInt(const char* valueName, size_t value) { };
 void SpecRunner::logValueHInt(const char* valueName, size_t value) { };
 void SpecRunner::logValueInt(const char* valueName, long value) { };
 void SpecRunner::logValueDbl(const char* valueName, double   value) { };
+
+void SpecRunner::logReport(void) { };
