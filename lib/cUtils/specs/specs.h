@@ -5,6 +5,18 @@
 
 #include "cUtils/assertions.h"
 
+/// \def pending_describe(className)
+/// \brief Describes a collection of specifications.
+///
+/// The className provided MUST be able to be used a the name of a C
+/// function.
+///
+/// There MUST be a corresponding endDescribe macro call.
+#define pending_describe(className)				\
+int run ## className(void) {					\
+  SpecRunner::get()->beginDescription(#className, false);	\
+  if (false) try
+
 /// \def describe(className)
 /// \brief Describes a collection of specifications.
 ///
@@ -12,9 +24,9 @@
 /// function.
 ///
 /// There MUST be a corresponding endDescribe macro call.
-#define describe(className)				\
-int run ## className(void) {			\
-  SpecRunner::get()->beginDescription(#className);	\
+#define describe(className)					\
+int run ## className(void) {					\
+  SpecRunner::get()->beginDescription(#className, true);	\
   try
 
 /// \def endDescribe(className)
@@ -34,13 +46,20 @@ int run ## className(void) {			\
 static int localRunner =				\
   SpecRunner::registerRunner(run ## className)
 
+/// \def pending_it(message)
+/// \brief Opens an "it" specification which will not be run.
+///
+/// There MUST be a corresponding endIt();
+#define pending_it(message)				\
+  SpecRunner::get()->beginItSpec(message, false);	\
+  if (false) try 
 
 /// \def it(message)
 /// \brief Opens an "it" specification.
 ///
 /// There MUST be a corresponding endIt();
 #define it(message)					\
-  SpecRunner::get()->beginItSpec(message);		\
+  SpecRunner::get()->beginItSpec(message, true);	\
   try
 
 /// \def endIt()
@@ -161,13 +180,13 @@ public:
   virtual ~SpecRunner(void);
 
   /// \brief Instrument the begining of a description.
-  virtual void beginDescription(const char* message);
+  virtual void beginDescription(const char* message, bool runDescribe);
 
   /// \brief Instrument the end of a description.
   virtual int endDescription(void);
 
   /// \brief Instrument the begining of a "it" specfication.
-  virtual void beginItSpec(const char* message);
+  virtual void beginItSpec(const char* message, bool runIt);
 
   /// \brief Instrument the end of a "it" specfication.
   virtual void endItSpec(void);

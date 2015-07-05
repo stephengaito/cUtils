@@ -10,9 +10,13 @@ VerboseRunner::VerboseRunner(FILE *aLogFile) {
 
 VerboseRunner::~VerboseRunner(void) { };
 
-void VerboseRunner::beginDescription(const char* message) {
+void VerboseRunner::beginDescription(const char* message, bool runDescribe) {
   inSideSizeValues = false;
-  fprintf(logFile, "%s\n", message);
+  if (runDescribe) {
+    fprintf(logFile, "%s\n", message);
+  } else {
+    fprintf(logFile, "PENDING: %s\n", message);
+  }
 };
 
 int VerboseRunner::endDescription(void) {
@@ -21,9 +25,13 @@ int VerboseRunner::endDescription(void) {
   return 0;
 };
 
-void VerboseRunner::beginItSpec(const char* message) {
+void VerboseRunner::beginItSpec(const char* message, bool runIt) {
   clearInSideSizeValues();
-  fprintf(logFile, "  %s\n", message);
+  if (runIt) {
+    fprintf(logFile, "  %s\n", message);
+  } else {
+    fprintf(logFile, "  PENDING: %s\n", message);
+  }
 };
 
 void VerboseRunner::endItSpec(void) {
