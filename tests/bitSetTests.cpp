@@ -40,10 +40,18 @@ describe(BitSet) {
 
   it("offset2num compose num2offset should be inverse modulo rounding down") {
     shouldBeZero(BitSet::offset2num(BitSet::num2offset(12)));
+#ifdef __x86_64__
     shouldBeZero(BitSet::offset2num(BitSet::num2offset(63)));
+#else
+    shouldBeZero(BitSet::offset2num(BitSet::num2offset(31)));
+#endif
     shouldBeEqual(BitSet::offset2num(BitSet::num2offset(64)), 64);
     shouldBeEqual(BitSet::offset2num(BitSet::num2offset(65)), 64);
+#ifdef __x86_64__
     shouldBeEqual(BitSet::offset2num(BitSet::num2offset(12287)), 12224);
+#else
+    shouldBeEqual(BitSet::offset2num(BitSet::num2offset(12287)), 12256);
+#endif
     shouldBeEqual(BitSet::offset2num(BitSet::num2offset(12288)), 12288);
     shouldBeEqual(BitSet::offset2num(BitSet::num2offset(12289)), 12288);
     shouldBeEqual(BitSet::offset2num(BitSet::num2offset(12316)), 12288);
