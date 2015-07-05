@@ -125,12 +125,12 @@ describe(VarArray) {
       aVarArray.pushItem((char*)i);
       shouldBeEqual(aVarArray.getNumItems(), (i+1));
       shouldNotBeZero(aVarArray.arraySize);
-      shouldBeEqual(aVarArray.itemArray[i], ((char*)i));
+      shouldBeEqual((void*)aVarArray.itemArray[i], ((void*)i));
     }
     shouldBeEqual(aVarArray.numItems,      (100));
     size_t arraySize = aVarArray.arraySize;
     for(size_t i = 100; 0 < i; i--) {
-      shouldBeEqual(aVarArray.popItem(), ((char*)i-1));
+      shouldBeEqual((void*)aVarArray.popItem(), ((void*)(i-1)));
       shouldBeEqual(aVarArray.getNumItems(), (i-1));
       shouldBeEqual(aVarArray.arraySize, (arraySize));
     }
