@@ -48,11 +48,15 @@ SpecRunner *SpecRunner::get(void) {
 
 SpecRunner::~SpecRunner(void) { };
 
-void SpecRunner::beginDescription(const char* message, bool runDescribe) { };
+void SpecRunner::beginDescription(bool runDescribe,
+                                  const char *firstMessage,
+                                  ...) { };
 
 int SpecRunner::endDescription(void) { return 0; };
 
-void SpecRunner::beginItSpec(const char* message, bool runIt) { };
+void SpecRunner::beginItSpec(bool runIt,
+                             const char *firstMessage,
+                             ...) { };
 
 void SpecRunner::endItSpec(void) { };
 

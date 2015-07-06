@@ -42,13 +42,17 @@ public:
   ~VerboseRunner(void);
 
   /// \brief Instrument the begining of a description.
-  void beginDescription(const char* message, bool runDescribe);
+  void beginDescription(bool runDescribe,
+                        const char *firstMessage,
+                        ...); // uses varargs
 
   /// \brief Instrument the end of a description.
   int endDescription(void);
 
   /// \brief Instrument the begining of a "it" specfication.
-  void beginItSpec(const char* message, bool runIt);
+  void beginItSpec(bool runIt,
+                   const char *firstMessage,
+                   ...); // uses varargs
 
   /// \brief Instrument the end of a "it" specfication.
   void endItSpec(void);

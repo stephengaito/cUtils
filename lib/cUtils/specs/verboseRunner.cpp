@@ -25,18 +25,32 @@ VerboseRunner::VerboseRunner(FILE *aLogFile) {
 
 VerboseRunner::~VerboseRunner(void) { };
 
-void VerboseRunner::beginDescription(const char* message, bool runDescribe) {
+void VerboseRunner::beginDescription(bool runDescribe,
+                                     const char *firstMessage,
+                                     ...) { // uses varargs
+  va_list apDescribe;
+  va_start(apDescribe, firstMessage);
+
   inSideSizeValues = false;
   descriptionFailed = false;
   numDescriptions++;
+  const char *pendingMessage = NULL;
   if (runDescribe) {
-    fprintf(logFile, "%s\n", message);
+    pendingMessage = "";
     descriptionPending = false;
   } else {
-    fprintf(logFile, "PENDING: %s\n", message);
+    pendingMessage = "PENDING: ";
     descriptionPending = true;
     numPendingDescriptions++;
   }
+  fprintf(logFile, "%s%s\n", pendingMessage, firstMessage);
+  for (const char* message = va_arg(apDescribe, const char*) ;
+       message ;
+       message = va_arg(apDescribe, const char*) ) {
+    fprintf(logFile, "  %s\n", message);
+  }
+
+  va_end(apDescribe);
 };
 
 int VerboseRunner::endDescription(void) {
@@ -50,18 +64,32 @@ int VerboseRunner::endDescription(void) {
   return 0;
 };
 
-void VerboseRunner::beginItSpec(const char* message, bool runIt) {
+void VerboseRunner::beginItSpec(bool runIt,
+                                const char *firstMessage,
+                                ...) { // uses varargs
+  va_list apIt;
+  va_start(apIt, firstMessage);
+
   clearInSideSizeValues();
   specFailed = false;
   numSpecs++;
+  const char *pendingMessage = NULL;
   if (runIt) {
-    fprintf(logFile, "  %s\n", message);
+    pendingMessage = "  ";
     specPending = false;
   } else {
-    fprintf(logFile, "--PENDING: %s\n", message);
+    pendingMessage = "--PENDING: ";
     specPending = true;
     numPendingSpecs++;
   }
+  fprintf(logFile, "%s%s\n", pendingMessage, firstMessage);
+  for (const char *message = va_arg(apIt, const char*) ;
+       message ;
+       message = va_arg(apIt, const char*) ) {
+    fprintf(logFile, "%s  %s\n", pendingMessage, message);
+  }
+
+  va_end(apIt);
 };
 
 void VerboseRunner::endItSpec(void) {
@@ -97,7 +125,7 @@ bool VerboseRunner::assertShouldEqual(bool sense,
   numShoulds++;
   bool condition = (actualValue == expectedValue);
   if (condition != sense) {
-    fprintf(logFile, "-->>> should %s be equal\n", (sense ? "" : "not"));
+    fprintf(logFile, "-->>> should %s be equal (as int64_t)\n", (sense ? "" : "not"));
     fprintf(logFile, "---->   actual: [%s] = %lld\n", actualStr, (long long int)actualValue);
     fprintf(logFile, "----> expected: [%s] = %lld\n", expectedStr, (long long int)expectedValue);
     fprintf(logFile, "----> file: %s(%zu)\n", fileName, lineNum);
@@ -114,7 +142,7 @@ bool VerboseRunner::assertShouldEqual(bool sense,
   numShoulds++;
   bool condition = (actualValue == expectedValue);
   if (condition != sense) {
-    fprintf(logFile, "-->>> should %s be equal\n", (sense ? "" : "not"));
+    fprintf(logFile, "-->>> should %s be equal (as void*)\n", (sense ? "" : "not"));
     fprintf(logFile, "---->   actual: [%s] = %p\n", actualStr, actualValue);
     fprintf(logFile, "----> expected: [%s] = %p\n", expectedStr, expectedValue);
     fprintf(logFile, "----> file: %s(%zu)\n", fileName, lineNum);
@@ -131,7 +159,7 @@ bool VerboseRunner::assertShouldEqual(bool sense,
   numShoulds++;
   bool condition = (strcmp(actualValue, expectedValue) == 0);
   if (condition != sense) {
-    fprintf(logFile, "-->>> should %s be equal\n", (sense ? "" : "not"));
+    fprintf(logFile, "-->>> should %s be equal (as const char*)\n", (sense ? "" : "not"));
     fprintf(logFile, "---->   actual: [%s] = [%s](%p)\n", actualStr, actualValue, actualValue);
     fprintf(logFile, "----> expected: [%s] = [%s}(%p)\n", expectedStr, expectedValue, expectedValue);
     fprintf(logFile, "----> file: %s(%zu)\n", fileName, lineNum);

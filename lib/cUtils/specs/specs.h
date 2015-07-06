@@ -14,7 +14,19 @@
 /// There MUST be a corresponding endDescribe macro call.
 #define pending_describe(className)				\
 int run ## className(void) {					\
-  SpecRunner::get()->beginDescription(#className, false);	\
+  SpecRunner::get()->beginDescription(false, #className, NULL);	\
+  if (false) try
+
+/// \def pending_describeMM(className, ...)
+/// \brief Describes a collection of specifications using multiple messages.
+///
+/// The className provided MUST be able to be used a the name of a C
+/// function.
+///
+/// There MUST be a corresponding endDescribe macro call.
+#define pending_describeMM(className, ...)				     \
+int run ## className(void) {						     \
+  SpecRunner::get()->beginDescription(false, #className, __VA_ARGS__, NULL); \
   if (false) try
 
 /// \def describe(className)
@@ -26,7 +38,19 @@ int run ## className(void) {					\
 /// There MUST be a corresponding endDescribe macro call.
 #define describe(className)					\
 int run ## className(void) {					\
-  SpecRunner::get()->beginDescription(#className, true);	\
+  SpecRunner::get()->beginDescription(true, #className, NULL);	\
+  try
+
+/// \def describeMM(className, ...)
+/// \brief Describes a collection of specifications using multiple messages.
+///
+/// The className provided MUST be able to be used a the name of a C
+/// function.
+///
+/// There MUST be a corresponding endDescribe macro call.
+#define describeMM(className, ...)					    \
+int run ## className(void) {						    \
+  SpecRunner::get()->beginDescription(true, #className, __VA_ARGS__, NULL); \
   try
 
 /// \def endDescribe(className)
@@ -50,16 +74,16 @@ static int localRunner =				\
 /// \brief Opens an "it" specification which will not be run.
 ///
 /// There MUST be a corresponding endIt();
-#define pending_it(message)				\
-  SpecRunner::get()->beginItSpec(message, false);	\
+#define pending_it(...)						\
+  SpecRunner::get()->beginItSpec(false, __VA_ARGS__, NULL);	\
   if (false) try 
 
 /// \def it(message)
 /// \brief Opens an "it" specification.
 ///
 /// There MUST be a corresponding endIt();
-#define it(message)					\
-  SpecRunner::get()->beginItSpec(message, true);	\
+#define it(...)							\
+  SpecRunner::get()->beginItSpec(true, __VA_ARGS__, NULL);	\
   try
 
 /// \def endIt()
@@ -180,13 +204,17 @@ public:
   virtual ~SpecRunner(void);
 
   /// \brief Instrument the begining of a description.
-  virtual void beginDescription(const char* message, bool runDescribe);
+  virtual void beginDescription(bool runDescribe,
+                                const char *firstMessage,
+                                ...); // uses varargs!
 
   /// \brief Instrument the end of a description.
   virtual int endDescription(void);
 
   /// \brief Instrument the begining of a "it" specfication.
-  virtual void beginItSpec(const char* message, bool runIt);
+  virtual void beginItSpec(bool runIt,
+                           const char *firstMessage,
+                           ...); // uses varargs!
 
   /// \brief Instrument the end of a "it" specfication.
   virtual void endItSpec(void);
