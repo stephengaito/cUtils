@@ -117,6 +117,28 @@ void VerboseRunner::assertionFailure(AssertionFailure af) {
   SHOULD_FAILED;
 };
 
+void VerboseRunner::assertShouldReachThisPoint(bool sense,
+                                               const char *fileName,
+                                               size_t lineNum,
+                                               ...) {
+  va_list apSucceed;
+  va_start(apSucceed, lineNum);
+
+  if (!sense) {
+    fprintf(logFile, "-->>> should not have reached this point\n");
+    for (const char *message = va_arg(apSucceed, const char*) ;
+         message ;
+         message = va_arg(apSucceed, const char*) ) {
+      fprintf(logFile, "----> %s\n", message);
+    }
+    fprintf(logFile, "----> file: %s(%zu)\n", fileName, lineNum);
+    SHOULD_FAILED;
+  }
+
+  va_end(apSucceed);
+};
+
+
 bool VerboseRunner::assertShouldEqual(bool sense,
          const char* actualStr,   int64_t actualValue,
          const char* expectedStr, int64_t expectedValue,

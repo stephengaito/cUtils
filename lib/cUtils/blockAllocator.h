@@ -60,7 +60,7 @@ class BlockAllocator {
 
     /// \brief Destory the block allocator and all of its blocks.
     ~BlockAllocator(void) {
-      ASSERT(invariant());
+      ASSERT_INSIDE_DELETE(invariant());
       clearBlocks();
       blockSize = 0;
       curAllocationByte = NULL;

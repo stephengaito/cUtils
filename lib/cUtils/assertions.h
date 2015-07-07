@@ -19,6 +19,7 @@
 // SO REMOVE ALL ASSERTS
 #define ASSERT(cond)
 #define ASSERT_MESSAGE(cond, message)
+#define ASSERT_INSIDE_DELETE(cond)
 #define FalseOrAssertionFailure(message) return false
 //////////////////////////////////////////////////////////////////////////////
 
@@ -132,10 +133,10 @@ public:
   ///
   /// This method is typically, automatically, called by the ASSERT
   /// and/or ASSERT_MESSAGE macros.
-  static void addStackTrace(const AssertionFailure& af,
-                            const char   *aFileName,
-                            const size_t  aLineNumber) {
-    MessageHolder *messages = af.messages->getLastMessage();
+  static void addStackTrace(MessageHolder *someMessages,
+                            const char    *aFileName,
+                            const size_t   aLineNumber) {
+    MessageHolder *messages = someMessages;
     // now add the filename and line numbers provided....
     // and add recent call stack information...
     void *stackReturnAddressList[MAX_FRAMES+1];
@@ -174,7 +175,7 @@ public:
       }
       if (stackFrameSymbols) free(stackFrameSymbols);
     }
-    throw AssertionFailure(af.messages, aFileName, aLineNumber);
+    throw AssertionFailure(someMessages, aFileName, aLineNumber);
   }
 
   MessageHolder *messages;
@@ -182,18 +183,38 @@ public:
   size_t     lineNumber;
 };
 
-#define ASSERT(condition)						 \
-  try {									 \
-    if (!(condition)) throw AssertionFailure("("#condition") is false"); \
-  } catch (const AssertionFailure& af) {				 \
-    AssertionFailure::addStackTrace(af, __FILE__, __LINE__);		 \
+#define ASSERT(condition)						\
+  if (!(condition)) {							\
+    AssertionFailure::addStackTrace(					\
+      new AssertionFailure::MessageHolder("("#condition") is false"), 	\
+      __FILE__, __LINE__);						\
   }
 
-#define ASSERT_MESSAGE(condition, message)				 \
-  try {									 \
-    if (!(condition)) throw AssertionFailure("("#condition") is false "#message); \
-  } catch (const AssertionFailure& af) {				 \
-    AssertionFailure::addStackTrace(af, __FILE__, __LINE__);		 \
+#define ASSERT_MESSAGE(condition, message)				\
+  if (!(condition)) {							\
+    AssertionFailure::addStackTrace(					\
+      new AssertionFailure::MessageHolder(				\
+        "("#condition") is false "#message),				\
+      __FILE__, __LINE__);						\
+  }
+
+#define ASSERT_INSIDE_DELETE(condition)					\
+  try {									\
+    try {								\
+      if (!(condition)) {						\
+        throw AssertionFailure("("#condition") is false inside delete");\
+      }									\
+    } catch (AssertionFailure af) {					\
+      AssertionFailure::addStackTrace(af.messages, __FILE__, __LINE__);	\
+    }									\
+  } catch (AssertionFailure af) {					\
+    printf("-->>> assertion failure inside delete\n");			\
+    printf("----> %s(%zu)\n", af.fileName, af.lineNumber);		\
+    for (AssertionFailure::MessageHolder *curMessage = af.messages ;	\
+         curMessage ; curMessage = curMessage->next) {			\
+      printf("----> %s\n", curMessage->message);			\
+    }									\
+    if (af.messages) delete af.messages;				\
   }
 
 #define FalseOrAssertionFailure(message) throw AssertionFailure(message)

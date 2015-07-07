@@ -62,6 +62,11 @@ void SpecRunner::endItSpec(void) { };
 
 void SpecRunner::assertionFailure(AssertionFailure af) {  };
 
+void SpecRunner::assertShouldReachThisPoint(bool sense,
+                                            const char *fileName,
+                                            size_t lineNum,
+                                            ...) { };
+
 bool SpecRunner::assertShouldEqual(bool sense,
          const char* actualStr,   int64_t actualValue,
          const char* expectedStr, int64_t expectedValue,

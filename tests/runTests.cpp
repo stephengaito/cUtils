@@ -14,7 +14,9 @@ int main(int argc, char* argv[]) {
   fprintf(stdout, "     uint64_t = %zu bytes (%zu bits)\n", sizeof(uint64_t),  sizeof(uint64_t)*8);
   fprintf(stdout, "       size_t = %zu bytes (%zu bits)\n", sizeof(size_t),    sizeof(size_t)*8);
   printf("----------------------------------------------------------------\n");
-  int result = SpecRunner::runAllUsing(new VerboseRunner());
+  int result = SpecRunner::runAllUsing(new VerboseRunner()) - 1;
+  printf("----------------------------------------------------------------\n");
+  printf("number of unexpected failures: %d\n", result);
   printf("----------------------------------------------------------------\n");
   return result;
 }

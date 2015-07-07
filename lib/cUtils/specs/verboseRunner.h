@@ -60,6 +60,12 @@ public:
   /// \brief Report an assertion failure.
   void assertionFailure(AssertionFailure af);
 
+  /// \brief Report the lack of success in reaching a given point.
+  virtual void assertShouldReachThisPoint(bool sense,
+                                          const char *fileName,
+                                          size_t lineNum,
+                                          ...); // uses varargs!
+
   /// \brief Report the failure of an equal/not-equal condition.
   ///
   /// Returns the value of the condition.

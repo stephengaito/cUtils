@@ -39,12 +39,11 @@ class VarArray {
     /// Note that this should be invoked implicitly when ever the
     /// containing object gets deleted.
     ~VarArray(void) {
-      ASSERT(invariant());
+      ASSERT_INSIDE_DELETE(invariant());
       if (itemArray) free(itemArray);
       itemArray = NULL;
       numItems  = 0;
       arraySize = 0;
-      ASSERT(invariant());
     }
 
     /// \brief Return the current number of items in the array.
@@ -73,7 +72,7 @@ class VarArray {
     /// \brief Get the requested item.
     ///
     /// Returns the default provided if the itemNumber is out of range.
-    ItemT getItem(size_t itemNumber, ItemT defaultItem) {
+    ItemT getItem(size_t itemNumber, ItemT defaultItem) const {
       ASSERT(invariant());
       if (numItems <= itemNumber) return defaultItem;
       return itemArray[itemNumber];

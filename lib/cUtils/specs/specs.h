@@ -96,6 +96,19 @@ static int localRunner =				\
   }							\
   SpecRunner::get()->endItSpec()
 
+/// \def shouldReachThisPoint()
+/// \brief Asserts that we have succeeded if we reach this point.
+#define shouldReachThisPoint()				\
+  SpecRunner::get()->assertShouldReachThisPoint(true,	\
+    __FILE__, __LINE__, NULL)
+
+/// \def shouldNotReachThisPoint(message, ...)
+/// \brief Asserts that we have failed by reaching this point,
+/// so we should report the message provided.
+#define shouldNotReachThisPoint(...)			\
+  SpecRunner::get()->assertShouldReachThisPoint(false,	\
+    __FILE__, __LINE__, __VA_ARGS__, NULL)
+
 /// \def shouldBeZero(actual)
 /// \brief Asserts that the actual value should be 0.
 #define shouldBeZero(actual)				\
@@ -221,6 +234,11 @@ public:
 
   /// \brief Report an assertion failure.
   virtual void assertionFailure(AssertionFailure af);
+
+  /// \brief Report the lack of success in reaching a given point.
+  virtual void assertShouldReachThisPoint(bool sense,
+                                          const char *fileName, size_t lineNum,
+                                          ...); // uses varargs!
 
   /// \brief Report the failure of an equal/not-equal condition.
   ///
