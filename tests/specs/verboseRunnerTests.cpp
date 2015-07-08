@@ -26,7 +26,7 @@ public:
   int testInt;
 };
 
-describeMM(VerboseRunner, "should have two failures") {
+describeMM(VerboseRunner, "should have four assertion failures") {
 
   specSize(VerboseRunner);
 
@@ -38,7 +38,7 @@ describeMM(VerboseRunner, "should have two failures") {
    ASSERT_MESSAGE(false, "this is an assert with message");
   } endIt();
 
-  it("ASSERT failure inside delete", "SHOULD FAIL",
+  it("ASSERT failure inside delete", "SHOULD FAIL twice",
      "BUT throwing exceptions inside destructors is not supported",
      "AND results in immediate program termination") {
     SimpleTestClass *testClass = new SimpleTestClass();

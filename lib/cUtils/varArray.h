@@ -100,16 +100,16 @@ class VarArray {
     }
 
     /// \brief Copy the items in this array into the buffer provided.
-    void copyItems(void*buffer, size_t bufferSize) {
-      ASSERT(invariant());
-      if (numItems*sizeof(ItemT) < bufferSize) {
-        bufferSize = numItems*sizeof(ItemT);
-      }
-      if (bufferSize < numItems*sizeof(ItemT)) {
-        bufferSize = sizeof(ItemT)*(bufferSize/sizeof(ItemT));
-      }
-      memcpy(buffer, itemArray, bufferSize);
-    }
+//    void copyItems(void*buffer, size_t bufferSize) {
+//      ASSERT(invariant());
+//      if (numItems*sizeof(ItemT) < bufferSize) {
+//        bufferSize = numItems*sizeof(ItemT);
+//      }
+//      if (bufferSize < numItems*sizeof(ItemT)) {
+//        bufferSize = sizeof(ItemT)*(bufferSize/sizeof(ItemT));
+//      }
+//      memcpy(buffer, itemArray, bufferSize);
+//    }
 
     /// \brief Remove all items from this array.
     void clearItems(void) {
@@ -122,6 +122,7 @@ class VarArray {
     /// \brief Provide a *deep* copy of the other VarArray<ItemT>
     /// instance.
     void operator=(const VarArray &other) {
+//        ASSERT_MESSAGE(false, "VarArgs<>::operator= must NOT be used");
       ASSERT(other.invariant());
       numItems  = 0;
       arraySize = 0;
