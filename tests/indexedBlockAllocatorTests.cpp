@@ -30,7 +30,9 @@ describe(IndexedBlockAllocator) {
     IndexedBlockAllocator *iba = new IndexedBlockAllocator(11, 4);
     shouldNotBeNULL(iba);
     size_t iba0 = iba->allocateNewStructure();
+    shouldBeEqual(iba->nextIndex(), 1);
     size_t iba1 = iba->allocateNewStructure();
+    shouldBeEqual(iba->nextIndex(), 2);
     shouldBeEqual(iba0, 0);
     shouldBeEqual(iba1, 1);
     shouldBeEqual(iba->getItemPtr(iba0), iba->blocks.getTop());

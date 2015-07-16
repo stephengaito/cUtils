@@ -48,6 +48,12 @@ class IndexedBlockAllocator : public BlockAllocator {
       return (blockNum << bitShift) + (itemPtr - blocks.getTop())/itemSize;
     }
 
+    size_t nextIndex(void) {
+      char *itemPtr = curAllocationByte;
+      size_t blockNum = blocks.getNumItems() - 1;
+      return (blockNum << bitShift) + (itemPtr - blocks.getTop())/itemSize;
+    }
+
     /// \brief Compute the char* pointer corresponding to this
     /// itemNumber.
     char *getItemPtr(size_t itemNum) {
