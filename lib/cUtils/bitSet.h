@@ -89,6 +89,8 @@ class BitSet {
     void clearBit(size_t bitNum)  { manipulateBit(bitNum, false, false); }
     void toggleBit(size_t bitNum) { manipulateBit(bitNum, true,  false); }
 
+    size_t numNonZero(void) { return 0; }
+
   protected:
 
     static size_t num2offset(size_t aNumber) {
