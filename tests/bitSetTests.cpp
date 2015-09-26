@@ -28,6 +28,9 @@ describe(BitSet) {
   it("should be created with correct values") {
     BitSet *bitSet = new BitSet();
     shouldNotBeNULL(bitSet);
+    shouldBeNULL(bitSet->root);
+    shouldBeTrue(bitSet->isEmpty());
+    shouldBeZero(bitSet->numNonZero());
     delete bitSet;
   } endIt();
 
@@ -76,17 +79,27 @@ describe(BitSet) {
     BitSet *bitSet = new BitSet();
     shouldNotBeNULL(bitSet);
     shouldBeNULL(bitSet->root);
+    shouldBeTrue(bitSet->isEmpty());
+    shouldBeZero(bitSet->numNonZero());
     bitSet->setBit(1000);
     shouldNotBeNULL(bitSet->root);
     shouldBeFalse(bitSet->getBit(1));
     shouldBeTrue(bitSet->getBit(1000));
     shouldBeFalse(bitSet->getBit(10001));
+    shouldBeFalse(bitSet->isEmpty());
+    shouldBeEqual(bitSet->numNonZero(), 1);
     bitSet->clearBit(1000);
     shouldBeFalse(bitSet->getBit(1000));
+    shouldBeTrue(bitSet->isEmpty());
+    shouldBeZero(bitSet->numNonZero());
     bitSet->toggleBit(1000);
+    shouldBeFalse(bitSet->isEmpty());
     shouldBeTrue(bitSet->getBit(1000));
+    shouldBeEqual(bitSet->numNonZero(), 1);
     bitSet->toggleBit(1000);
     shouldBeFalse(bitSet->getBit(1000));
+    shouldBeTrue(bitSet->isEmpty());
+    shouldBeZero(bitSet->numNonZero());
     delete bitSet;
   } endIt();
 
@@ -94,13 +107,19 @@ describe(BitSet) {
     BitSet *bitSet = new BitSet();
     shouldNotBeNULL(bitSet);
     shouldBeNULL(bitSet->root);
+    shouldBeTrue(bitSet->isEmpty());
+    shouldBeZero(bitSet->numNonZero());
     shouldBeFalse(bitSet->getBit(1000));
     bitSet->setBit(1000);
+    shouldBeFalse(bitSet->isEmpty());
+    shouldBeEqual(bitSet->numNonZero(), 1);
     shouldBeTrue(bitSet->getBit(1000));
     shouldNotBeNULL(bitSet->root);
     shouldBeFalse(bitSet->getBit(1));
     bitSet->setBit(1);
     shouldBeTrue(bitSet->getBit(1));
+    shouldBeFalse(bitSet->isEmpty());
+    shouldBeEqual(bitSet->numNonZero(), 2);
     delete bitSet;
   } endIt();
 
@@ -108,13 +127,19 @@ describe(BitSet) {
     BitSet *bitSet = new BitSet();
     shouldNotBeNULL(bitSet);
     shouldBeNULL(bitSet->root);
+    shouldBeTrue(bitSet->isEmpty());
+    shouldBeZero(bitSet->numNonZero());
     shouldBeFalse(bitSet->getBit(1));
     bitSet->setBit(1);
     shouldBeTrue(bitSet->getBit(1));
     shouldNotBeNULL(bitSet->root);
+    shouldBeFalse(bitSet->isEmpty());
+    shouldBeEqual(bitSet->numNonZero(), 1);
     shouldBeFalse(bitSet->getBit(1000));
     bitSet->setBit(1000);
     shouldBeTrue(bitSet->getBit(1000));
+    shouldBeFalse(bitSet->isEmpty());
+    shouldBeEqual(bitSet->numNonZero(), 2);
     delete bitSet;
   } endIt();
 
@@ -122,18 +147,26 @@ describe(BitSet) {
     BitSet *bitSet = new BitSet();
     shouldNotBeNULL(bitSet);
     shouldBeNULL(bitSet->root);
+    shouldBeTrue(bitSet->isEmpty());
+    shouldBeZero(bitSet->numNonZero());
     shouldBeFalse(bitSet->getBit(1));
     bitSet->setBit(1);
     shouldBeTrue(bitSet->getBit(1));
     shouldNotBeNULL(bitSet->root);
+    shouldBeFalse(bitSet->isEmpty());
+    shouldBeEqual(bitSet->numNonZero(), 1);
 
     shouldBeFalse(bitSet->getBit(1000));
     bitSet->setBit(1000);
     shouldBeTrue(bitSet->getBit(1000));
+    shouldBeFalse(bitSet->isEmpty());
+    shouldBeEqual(bitSet->numNonZero(), 2);
 
     shouldBeFalse(bitSet->getBit(500));
     bitSet->setBit(500);
     shouldBeTrue(bitSet->getBit(500));
+    shouldBeFalse(bitSet->isEmpty());
+    shouldBeEqual(bitSet->numNonZero(), 3);
 
     delete bitSet;
   } endIt();

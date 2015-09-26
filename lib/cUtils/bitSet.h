@@ -89,7 +89,30 @@ class BitSet {
     void clearBit(size_t bitNum)  { manipulateBit(bitNum, false, false); }
     void toggleBit(size_t bitNum) { manipulateBit(bitNum, true,  false); }
 
-    size_t numNonZero(void) { return 0; }
+    bool isEmpty(void) const {
+      Segment *curSeg = root;
+      for ( ; curSeg ; curSeg = curSeg->next ) {
+        for ( BIT_SET_UINT i = 0; i < curSeg->numItems; i++ ) {
+          if (curSeg->bits[i]) return false;
+        }
+      }
+      return true;
+    }
+
+    size_t numNonZero(void) {
+      Segment *curSeg = root;
+      size_t bitCount = 0;
+      for ( ; curSeg ; curSeg = curSeg->next ) {
+        for ( BIT_SET_UINT i = 0 ; i < curSeg->numItems ; i++ ) {
+          size_t curItem = curSeg->bits[i];
+          for ( int j = 0 ; curItem && (j < sizeof(size_t)*8) ;
+                j++, curItem >>= 1 ) {
+            if (curItem & 0x1) bitCount++;
+          }
+        }
+      }
+      return bitCount;
+    }
 
   protected:
 
