@@ -75,6 +75,25 @@ describe(BitSet) {
     BitSet::deleteSegments(segment);
   } endIt();
 
+  it("copySegment should return a copy of a Segment") {
+    BitSet::Segment *segment = BitSet::newSegment(12314, 12314);
+    shouldNotBeNULL(segment);
+    shouldBeNULL(segment->next);
+    shouldBeEqual(segment->offset, BitSet::num2offset(12314));
+    shouldBeEqual(segment->numItems, BitSet::num2offset(12314)+1);
+    BitSet::Segment *copySeg = BitSet::copySegment(segment);
+    shouldNotBeNULL(copySeg);
+    shouldNotBeEqual(copySeg, segment);
+    shouldBeNULL(copySeg->next);
+    shouldBeEqual(copySeg->offset,   segment->offset);
+    shouldBeEqual(copySeg->numItems, segment->numItems);
+    for ( size_t i = 0; i < segment->numItems ; i++ ) {
+      shouldBeEqual(copySeg->bits[i], segment->bits[i]);
+    }
+    BitSet::deleteSegments(copySeg);
+    BitSet::deleteSegments(segment);
+  } endIt();
+
   it("should be able to twiddle multiple close bits in an empty bitSet") {
     BitSet *bitSet = new BitSet();
     shouldNotBeNULL(bitSet);
@@ -168,6 +187,49 @@ describe(BitSet) {
     shouldBeFalse(bitSet->isEmpty());
     shouldBeEqual(bitSet->numNonZero(), 3);
 
+    delete bitSet;
+  } endIt();
+
+  it("should be able to clone a complex bitSet") {
+    BitSet *bitSet = new BitSet();
+    shouldNotBeNULL(bitSet);
+    shouldBeNULL(bitSet->root);
+    shouldBeTrue(bitSet->isEmpty());
+    shouldBeZero(bitSet->numNonZero());
+    shouldBeFalse(bitSet->getBit(1));
+    bitSet->setBit(1);
+    shouldBeTrue(bitSet->getBit(1));
+    shouldNotBeNULL(bitSet->root);
+    shouldBeFalse(bitSet->isEmpty());
+    shouldBeEqual(bitSet->numNonZero(), 1);
+
+    shouldBeFalse(bitSet->getBit(1000));
+    bitSet->setBit(1000);
+    shouldBeTrue(bitSet->getBit(1000));
+    shouldBeFalse(bitSet->isEmpty());
+    shouldBeEqual(bitSet->numNonZero(), 2);
+
+    shouldBeFalse(bitSet->getBit(500));
+    bitSet->setBit(500);
+    shouldBeTrue(bitSet->getBit(500));
+    shouldBeFalse(bitSet->isEmpty());
+    shouldBeEqual(bitSet->numNonZero(), 3);
+
+    BitSet *copyBitSet = bitSet->clone();
+    shouldNotBeNULL(copyBitSet);
+    BitSet::Segment *curSeg  = bitSet->root;
+    BitSet::Segment *copySeg = copyBitSet->root;
+    for ( ; curSeg ; curSeg = curSeg->next , copySeg = copySeg->next ) {
+      shouldNotBeNULL(curSeg);
+      shouldNotBeNULL(copySeg);
+      shouldNotBeEqual(curSeg, copySeg);
+      shouldBeEqual(curSeg->offset,   copySeg->offset);
+      shouldBeEqual(curSeg->numItems, copySeg->numItems);
+      for ( size_t i = 0 ; i < curSeg->numItems ; i++ ) {
+        shouldBeEqual(curSeg->bits[i], copySeg->bits[i]);
+      }
+    }
+    delete copyBitSet;
     delete bitSet;
   } endIt();
 

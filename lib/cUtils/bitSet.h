@@ -114,6 +114,23 @@ class BitSet {
       return bitCount;
     }
 
+    BitSet *clone(void) {
+      BitSet *copyBitSet = new BitSet();
+      if (root) {
+        copyBitSet->root     = copySegment(root);
+        Segment *curSeg      = root->next;
+        Segment *prevCopySeg = copyBitSet->root;
+        for ( ; curSeg ; curSeg = curSeg->next ) {
+          Segment *copySeg = copySegment(curSeg);
+          ASSERT(copySeg);
+          prevCopySeg->next = copySeg;
+          prevCopySeg       = copySeg;
+        }
+        prevCopySeg->next = NULL;
+      }
+      return copyBitSet;
+    }
+
   protected:
 
     static size_t num2offset(size_t aNumber) {
@@ -132,6 +149,21 @@ class BitSet {
       BIT_SET_UINT numItems;
       size_t bits[0];
     } Segment;
+
+    static Segment *copySegment(Segment *curSegment) {
+      ASSERT(curSegment);
+      size_t numMembers = curSegment->numItems +
+        sizeof(Segment)/BIT_SET_ITEM_SIZE;
+      Segment *copySegment =
+        (Segment*)calloc(numMembers, sizeof(size_t));
+      ASSERT(copySegment);
+      copySegment->next   = curSegment->next;
+      copySegment->offset = curSegment->offset;
+      copySegment->numItems = curSegment->numItems;
+      memcpy(copySegment->bits, curSegment->bits,
+        curSegment->numItems*sizeof(size_t));
+      return copySegment;
+    }
 
     static Segment *newSegment(size_t bitNum, size_t numBits,
                                Segment *nextSegment = NULL) {
