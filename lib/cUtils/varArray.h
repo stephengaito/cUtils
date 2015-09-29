@@ -11,6 +11,9 @@
 #define VarArrayIncrement 10
 #endif
 
+template<class ItemT>
+class VarArrayIterator;
+
 /// \brief The VarArray template class holds the information required
 /// to manage a variable array of identical objects.
 template<class ItemT>
@@ -117,6 +120,11 @@ class VarArray {
       ASSERT(invariant());
     }
 
+    VarArrayIterator<ItemT> getIterator(void) {
+      VarArrayIterator<ItemT> iter(this);
+      return iter;
+    }
+
   protected:
 
     /// \brief Provide a *deep* copy of the other VarArray<ItemT>
@@ -142,6 +150,49 @@ class VarArray {
 
     /// \brief The items in the array.
     ItemT *itemArray;
+
+  friend class VarArrayIterator<ItemT>;
+
+
+};
+
+/// \brief The VarArrayIterator template class holds the information required
+/// to iterate over a VarArray.
+
+template<class ItemT>
+class VarArrayIterator {
+public:
+
+  bool hasMoreItems(void) {
+    ASSERT(baseArray);
+    return curItem < baseArray->numItems;
+  }
+
+  ItemT nextItem(void) {
+    ASSERT(baseArray);
+    ASSERT(curItem < baseArray->numItems);
+    return baseArray->itemArray[curItem++];
+  }
+
+  ~VarArrayIterator(void) {
+    baseArray = NULL;
+    curItem = 0;
+  }
+
+protected: // methods
+
+  VarArrayIterator(VarArray<ItemT> *aVarArray) {
+    baseArray = aVarArray;
+    curItem = 0;
+  }
+
+protected: // variables
+
+  VarArray<ItemT> *baseArray;
+
+  size_t curItem;
+
+  friend class VarArray<ItemT>;
 
 };
 

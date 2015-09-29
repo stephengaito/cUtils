@@ -215,10 +215,9 @@ describe(BitSet) {
     shouldBeFalse(bitSet->isEmpty());
     shouldBeEqual(bitSet->numNonZero(), 3);
 
-    BitSet *copyBitSet = bitSet->clone();
-    shouldNotBeNULL(copyBitSet);
+    BitSet copyBitSet = bitSet->clone();
     BitSet::Segment *curSeg  = bitSet->root;
-    BitSet::Segment *copySeg = copyBitSet->root;
+    BitSet::Segment *copySeg = copyBitSet.root;
     for ( ; curSeg ; curSeg = curSeg->next , copySeg = copySeg->next ) {
       shouldNotBeNULL(curSeg);
       shouldNotBeNULL(copySeg);
@@ -229,7 +228,6 @@ describe(BitSet) {
         shouldBeEqual(curSeg->bits[i], copySeg->bits[i]);
       }
     }
-    delete copyBitSet;
     delete bitSet;
   } endIt();
 

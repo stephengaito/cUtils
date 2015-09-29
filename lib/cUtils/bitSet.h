@@ -114,12 +114,12 @@ class BitSet {
       return bitCount;
     }
 
-    BitSet *clone(void) {
-      BitSet *copyBitSet = new BitSet();
+    BitSet clone(void) {
+      BitSet copyBitSet;
       if (root) {
-        copyBitSet->root     = copySegment(root);
+        copyBitSet.root      = copySegment(root);
         Segment *curSeg      = root->next;
-        Segment *prevCopySeg = copyBitSet->root;
+        Segment *prevCopySeg = copyBitSet.root;
         for ( ; curSeg ; curSeg = curSeg->next ) {
           Segment *copySeg = copySegment(curSeg);
           ASSERT(copySeg);
