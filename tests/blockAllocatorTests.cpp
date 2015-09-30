@@ -21,9 +21,7 @@ describe(BlockAllocator) {
     BlockAllocator *blockAllocator = new BlockAllocator(10);
     shouldNotBeNULL(blockAllocator);
     shouldBeEqual(blockAllocator->blockSize, 10);
-//    for (size_t i = 0; i < blockAllocator->numBlocks; i++) {
-//      shouldBeNULL(blockAllocator->blocks[i]);
-//    }
+    shouldBeTrue(blockAllocator->isEmpty());
     delete blockAllocator;
   } endIt();
 

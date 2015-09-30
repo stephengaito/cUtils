@@ -67,7 +67,6 @@ class BlockAllocator {
       endAllocationByte = NULL;
     }
 
-  public:
     /// \brief Allocate a new (sub)structure of the given size.
     char *allocateNewStructure(size_t structureSize) {
       ASSERT(invariant());
@@ -79,6 +78,11 @@ class BlockAllocator {
       curAllocationByte += structureSize;
       ASSERT(invariant());
       return newStructure;
+    }
+
+    bool isEmpty(void) {
+      ASSERT(invariant());
+      return 0 == blocks.getNumItems();
     }
 
   protected:
